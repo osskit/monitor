@@ -1,0 +1,6 @@
+{
+  "extends": ["noamokman", "prettier"],
+  "rules": {
+    "@typescript-eslint/no-empty-interface": "off"
+  }
+}
