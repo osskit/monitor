@@ -36,6 +36,7 @@ Type: `string`
 
 The scope of the application's metrics
 
-Returns: `(method: string, callable: () => T, options?)`
+Returns: `(method: string, callable: () => T, options?: MonitorOptions)`
+
 #### options
 Type: `{ context: Record<string, any> }`
