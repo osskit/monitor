@@ -33,6 +33,7 @@ const result = await monitor('query', async () => db.query());
 ### monitor(scope)
 #### scope
 Type: `string`
+
 Default: `general`
 
 The scope of the application's metrics
