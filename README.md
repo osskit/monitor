@@ -17,7 +17,7 @@ yarn add @osskit/monitor
 
 import createMonitor from '@osskit/monitor'
 
-export const monitor = createMonitor();
+export const monitor = createMonitor('metrics');
 ```
 
 ```
@@ -33,6 +33,7 @@ const result = await monitor('query', async () => db.query());
 ### monitor(scope)
 #### scope
 Type: `string`
+Default: `general`
 
 The scope of the application's metrics
 
