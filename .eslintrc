@@ -1,7 +1,7 @@
 {
   "extends": ["noamokman", "prettier"],
   "ignorePatterns": [
-    "example.ts"
+    "examples/**"
   ],
   "rules": {
     "@typescript-eslint/no-empty-interface": "off"
