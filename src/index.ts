@@ -20,7 +20,7 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
   return counters[name];
 };
 
-const scopedMonitor = <T>(scope: string, method: string, callable: () => T, options?: MonitorOptions) => {
+const monitor = <T>(scope: string, method: string, callable: () => T, options?: MonitorOptions) => {
   const counter = createCounter({ name: `${scope}_count`, help: `${scope}_count`, labelNames: ['method', 'result'] });
   const histogram = createHistogram({
     name: `${scope}_execution_time`,
@@ -67,4 +67,4 @@ const scopedMonitor = <T>(scope: string, method: string, callable: () => T, opti
 
 export default (scope = 'monitor') =>
   <T>(method: string, callable: () => T, options?: MonitorOptions) =>
-    scopedMonitor(scope, method, callable, options);
+    monitor(scope, method, callable, options);
