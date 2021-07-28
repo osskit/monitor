@@ -15,7 +15,7 @@ yarn add @osskit/monitor
 ```
 // initMonitor.ts
 
-import monitor as createMonitor from '@osskit/monitor'
+import createMonitor from '@osskit/monitor'
 
 export const monitor = createMonitor();
 ```
