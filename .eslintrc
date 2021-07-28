@@ -1,5 +1,8 @@
 {
   "extends": ["noamokman", "prettier"],
+  "ignorePatterns": [
+    "example.ts"
+  ],
   "rules": {
     "@typescript-eslint/no-empty-interface": "off"
   }
