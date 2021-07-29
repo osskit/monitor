@@ -1,4 +1,4 @@
-import { Counter, Histogram } from 'prom-client';
+import { Counter, Histogram, register } from 'prom-client';
 import type { Unpromisify, MonitorOptions } from './types';
 import logger from './logger';
 
@@ -8,14 +8,15 @@ const counters: Record<string, Counter<string>> = {};
 
 const createHistogram = ({ name, help, labelNames }: { name: string; help: string; labelNames?: string[] }) => {
   if (histograms[name]) return histograms[name];
-  histograms[name] = new Histogram({ name, help, buckets: [0.25, 0.5, 0.9, 0.99], labelNames });
+
+  histograms[name] = new Histogram({ name, help, buckets: [0.25, 0.5, 0.9, 0.99], labelNames, registers: [register] });
 
   return histograms[name];
 };
 
 const createCounter = ({ name, help, labelNames }: { name: string; help: string; labelNames?: string[] }) => {
   if (counters[name]) return counters[name];
-  counters[name] = new Counter({ name, help, labelNames });
+  counters[name] = new Counter({ name, help, labelNames, registers: [register] });
 
   return counters[name];
 };
