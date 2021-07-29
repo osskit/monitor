@@ -19,7 +19,7 @@ const createHistogram = ({
 }) => {
   if (histograms[name]) return histograms[name];
 
-  const histogram = new Histogram({ name, help, buckets: [0.25, 0.5, 0.9, 0.99], labelNames });
+  const histogram = new Histogram({ name, help, buckets: [0.25, 0.5, 0.9, 0.99], labelNames, registers: [registry] });
 
   histograms[name] = histogram;
   registry.registerMetric(histogram);
@@ -40,7 +40,7 @@ const createCounter = ({
 }) => {
   if (counters[name]) return counters[name];
 
-  const counter = new Counter({ name, help, labelNames });
+  const counter = new Counter({ name, help, labelNames, registers: [registry] });
 
   counters[name] = counter;
   registry.registerMetric(counter);
