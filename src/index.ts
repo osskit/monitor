@@ -1,4 +1,4 @@
-import { Counter, Histogram, Registry } from 'prom-client';
+import { Counter, Histogram } from 'prom-client';
 import type { Unpromisify, MonitorOptions } from './types';
 import logger from './logger';
 
@@ -6,60 +6,36 @@ const histograms: Record<string, Histogram<string>> = {};
 
 const counters: Record<string, Counter<string>> = {};
 
-const createHistogram = ({
-  name,
-  help,
-  registry,
-  labelNames,
-}: {
-  name: string;
-  help: string;
-  registry: Registry;
-  labelNames?: string[];
-}) => {
+const createHistogram = ({ name, help, labelNames }: { name: string; help: string; labelNames?: string[] }) => {
   if (histograms[name]) return histograms[name];
 
-  const histogram = new Histogram({ name, help, buckets: [0.25, 0.5, 0.9, 0.99], labelNames, registers: [registry] });
+  const histogram = new Histogram({ name, help, buckets: [0.25, 0.5, 0.9, 0.99], labelNames });
 
   histograms[name] = histogram;
-  registry.registerMetric(histogram);
 
   return histogram;
 };
 
-const createCounter = ({
-  name,
-  help,
-  registry,
-  labelNames,
-}: {
-  name: string;
-  help: string;
-  registry: Registry;
-  labelNames?: string[];
-}) => {
+const createCounter = ({ name, help, labelNames }: { name: string; help: string; labelNames?: string[] }) => {
   if (counters[name]) return counters[name];
 
-  const counter = new Counter({ name, help, labelNames, registers: [registry] });
+  const counter = new Counter({ name, help, labelNames });
 
   counters[name] = counter;
-  registry.registerMetric(counter);
 
   return counter;
 };
 
-const monitor = <T>(scope: string, method: string, callable: () => T, registry: Registry, options?: MonitorOptions) => {
+const monitor = <T>(scope: string, method: string, callable: () => T, options?: MonitorOptions) => {
   const counter = createCounter({
     name: `${scope}_count`,
     help: `${scope}_count`,
-    registry,
     labelNames: ['method', 'result'],
   });
   const histogram = createHistogram({
     name: `${scope}_execution_time`,
     help: `${scope}_execution_time`,
     labelNames: ['method', 'result'],
-    registry,
   });
 
   const stopTimer = histogram.startTimer();
@@ -99,6 +75,6 @@ const monitor = <T>(scope: string, method: string, callable: () => T, registry: 
   }
 };
 
-export default (scope = 'monitor', registry: Registry) =>
+export default (scope = 'monitor') =>
   <T>(method: string, callable: () => T, options?: MonitorOptions) =>
-    monitor(scope, method, callable, registry, options);
+    monitor(scope, method, callable, options);
