@@ -7,8 +7,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "example": "ts-node examples/example.ts",
-    "server": "ts-node examples/server.ts",
+    "examples_usage": "ts-node examples/usage.ts",
+    "examples_server": "ts-node examples/server.ts",
     "lint": "eslint src --fix --ext .ts",
     "format": "prettier --write '**/*.{ts,js,json}'",
     "prepare": "husky install"
@@ -22,6 +22,7 @@
     "prom-client": "^13.1.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.13",
     "@types/node": "^16.3.2",
     "@types/pino": "^6.3.9",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
@@ -32,6 +33,7 @@
     "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-lodash": "^7.2.0",
     "eslint-plugin-unicorn": "^33.0.1",
+    "express-prom-bundle": "^6.3.6",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.1",

@@ -1,19 +1,26 @@
-import http from 'http';
+import express, { Response } from 'express';
+import promBundle from 'express-prom-bundle';
 import { register } from 'prom-client';
-
 import createMonitor from '../src/index';
+import { createServer } from 'http';
 
 const monitor = createMonitor();
 
-const server = http.createServer(async (req, res) => {
-  if (req.method == 'POST') {
+const app = express()
+  .use(
+    promBundle({
+      includeMethod: true,
+      includePath: true,
+    }) as any,
+  )
+  .post('/', function (_req, res: Response) {
     monitor('someMethod', () => {
       return 42;
     });
-  }
-  if (req.method === 'GET') {
-    res.end(await register.metrics());
-  }
-  res.end();
-});
-server.listen(3000);
+    res.sendStatus(204);
+  })
+  .get('/', async function (_req, res: Response) {
+    res.send(await register.metrics());
+  });
+
+createServer(app).listen(3000);
