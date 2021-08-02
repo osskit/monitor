@@ -17,6 +17,7 @@
         "node": ">=16.0.0"
     },
     "dependencies": {
+        "execute-safe": "^0.0.2",
         "express": "^4.17.1",
         "pino": "^6.13.0",
         "prom-client": "^13.1.0"

@@ -1,8 +1,8 @@
 import { Counter, Histogram } from 'prom-client';
+import { safe } from 'execute-safe';
 import logger from './logger';
 
 import type { Unpromisify, MonitorOptions } from './types';
-import { parse } from './util';
 
 const histograms: Record<string, Histogram<string>> = {};
 
@@ -55,7 +55,7 @@ const monitor = <T>(scope: string, method: string, callable: () => T, options?: 
                     extra: {
                         context: options?.context,
                         executionTime,
-                        executionResult: options?.logResult ? parse(options?.parseResult)(result) : 'NOT_LOGGED',
+                        executionResult: options?.logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
                     },
                 },
                 `${scope}.${method}.success`,
