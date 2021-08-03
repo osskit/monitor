@@ -56,3 +56,7 @@ monitor('method_that_throws_error_and_use_async_await', async () => {
     await Promise.resolve();
     throw new Error('error');
 }).catch(() => {});
+
+monitor('method_that_use_async_await', () => {
+    return {"foo": "bar", "baz": 1}
+}, {logResult: true, parseResult: (x) => x.baz});

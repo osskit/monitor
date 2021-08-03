@@ -1,4 +1,5 @@
 import { Counter, Histogram } from 'prom-client';
+import { safe } from 'execute-safe';
 import logger from './logger';
 
 import type { Unpromisify, MonitorOptions } from './types';
@@ -27,7 +28,7 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
     return counter;
 };
 
-const monitor = <T>(scope: string, method: string, callable: () => T, options?: MonitorOptions) => {
+const monitor = <T>(scope: string, method: string, callable: () => T, options?: MonitorOptions<T>) => {
     const counter = createCounter({
         name: `${scope}_count`,
         help: `${scope}_count`,
@@ -49,7 +50,16 @@ const monitor = <T>(scope: string, method: string, callable: () => T, options?: 
 
             counter.inc({ method, result: 'success' });
             histogram.observe({ method, result: 'success' }, executionTime);
-            logger.info({ extra: { context: options?.context, executionTime } }, `${scope}.${method}.success`);
+            logger.info(
+                {
+                    extra: {
+                        context: options?.context,
+                        executionTime,
+                        executionResult: options?.logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
+                    },
+                },
+                `${scope}.${method}.success`,
+            );
 
             return result;
         }
@@ -77,5 +87,5 @@ const monitor = <T>(scope: string, method: string, callable: () => T, options?: 
 };
 
 export default (scope = 'monitor') =>
-    <T>(method: string, callable: () => T, options?: MonitorOptions) =>
+    <T>(method: string, callable: () => T, options?: MonitorOptions<T>) =>
         monitor(scope, method, callable, options);
