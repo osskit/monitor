@@ -28,7 +28,7 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
     return counter;
 };
 
-const monitor = <T>(scope: string, method: string, callable: () => T, options?: MonitorOptions) => {
+const monitor = <T>(scope: string, method: string, callable: () => T, options?: MonitorOptions<T>) => {
     const counter = createCounter({
         name: `${scope}_count`,
         help: `${scope}_count`,
@@ -87,5 +87,5 @@ const monitor = <T>(scope: string, method: string, callable: () => T, options?: 
 };
 
 export default (scope = 'monitor') =>
-    <T>(method: string, callable: () => T, options?: MonitorOptions) =>
+    <T>(method: string, callable: () => T, options?: MonitorOptions<T>) =>
         monitor(scope, method, callable, options);
