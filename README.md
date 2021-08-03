@@ -2,7 +2,7 @@
 
 # monitor
 
-## Monitor your actions the easy way with Prometheus
+## Monitor your methods easily with Prometheus
 
 </div>
 
@@ -13,17 +13,9 @@ yarn add @osskit/monitor
 
 ## Usage
 ```
-// initMonitor.ts
-
 import createMonitor from '@osskit/monitor'
 
 export const monitor = createMonitor('metrics');
-```
-
-```
-// app.ts
-
-import monitor from './initMonitor'
 
 const result = await monitor('query', async () => db.query());
 ```
