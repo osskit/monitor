@@ -57,6 +57,26 @@ monitor('method_that_throws_error_and_use_async_await', async () => {
     throw new Error('error');
 }).catch(() => {});
 
-monitor('method_that_use_async_await', () => {
-    return {"foo": "bar", "baz": 1}
-}, {logResult: true, parseResult: (x) => x.baz});
+monitor(
+    'method_that_log_result',
+    () => {
+        return { foo: 'bar', baz: 1 };
+    },
+    { logResult: true },
+);
+
+monitor(
+    'method_that_log_and_parse_result',
+    () => {
+        return { foo: 'bar', baz: 1 };
+    },
+    { logResult: true, parseResult: (x) => x.baz },
+);
+
+monitor(
+    'async_method_that_log_and_parse_result',
+    () => {
+        return Promise.resolve({ foo: 'bar', baz: 1 });
+    },
+    { logResult: true, parseResult: (x) => x.baz },
+);

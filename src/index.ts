@@ -70,7 +70,16 @@ const monitor = <T>(scope: string, method: string, callable: () => T, options?: 
 
                 counter.inc({ method, result: 'success' });
                 histogram.observe({ method, result: 'success' }, executionTime);
-                logger.info({ extra: { context: options?.context, executionTime } }, `${scope}.${method}.success`);
+                logger.info(
+                    {
+                        extra: {
+                            context: options?.context,
+                            executionTime,
+                            executionResult: options?.logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
+                        },
+                    },
+                    `${scope}.${method}.success`,
+                );
 
                 return promiseResult;
             })
