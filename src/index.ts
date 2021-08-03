@@ -28,7 +28,7 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
     return counter;
 };
 
-const monitor = <T>(scope: string, method: string, callable: () => T, options?: MonitorOptions<T>) => {
+const monitor = <T, TError>(scope: string, method: string, callable: () => T, options?: MonitorOptions<T, TError>) => {
     const counter = createCounter({
         name: `${scope}_count`,
         help: `${scope}_count`,
@@ -85,16 +85,22 @@ const monitor = <T>(scope: string, method: string, callable: () => T, options?: 
             })
             .catch((error: Error) => {
                 counter.inc({ method, result: 'error' });
-                logger.info({ extra: { context: options?.context } }, `${scope}.${method}.error`);
+                logger.info(
+                    { extra: { context: options?.context, error: safe(options?.parseError)(error) } },
+                    `${scope}.${method}.error`,
+                );
                 throw error;
             }) as any as T;
     } catch (error) {
         counter.inc({ method, result: 'error' });
-        logger.info({ extra: { context: options?.context } }, `${scope}.${method}.error`);
+        logger.info(
+            { extra: { context: options?.context, error: safe(options?.parseError)(error) } },
+            `${scope}.${method}.error`,
+        );
         throw error;
     }
 };
 
 export default (scope = 'monitor') =>
-    <T>(method: string, callable: () => T, options?: MonitorOptions<T>) =>
+    <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
         monitor(scope, method, callable, options);

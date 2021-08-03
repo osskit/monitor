@@ -80,3 +80,30 @@ monitor(
     },
     { logResult: true, parseResult: (x) => x.baz },
 );
+
+try {
+    monitor(
+        'method_that_throws_error_and_parse_it',
+        () => {
+            throw new Error('error');
+        },
+        { parseError: (e: Error) => e.name },
+    );
+} catch {}
+
+monitor(
+    'async_method_that_throws_error_and_parse_it',
+    async () => {
+        await Promise.resolve();
+        throw new Error('error');
+    },
+    { parseError: (e: Error) => e.stack },
+).catch(() => {});
+
+monitor(
+    'method_that_returns_rejected_promise_and_parse_it',
+    () => {
+        return Promise.reject('foo');
+    },
+    { parseError: (err: string) => `this is error for ${err}` },
+).catch(() => {});
