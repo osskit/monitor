@@ -107,3 +107,11 @@ monitor(
     },
     { parseError: (err: string) => `this is error for ${err}` },
 ).catch(() => {});
+
+monitor(
+    'method_that_returns_rejected_promise_and_parse_it',
+    () => {
+        return Promise.reject('foo');
+    },
+    { parseError: (_err: string) => Promise.resolve("hi")},
+).catch(() => {});

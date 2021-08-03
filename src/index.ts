@@ -83,10 +83,10 @@ const monitor = <T, TError>(scope: string, method: string, callable: () => T, op
 
                 return promiseResult;
             })
-            .catch((error: Error) => {
+            .catch(async (error: Error) => {
                 counter.inc({ method, result: 'error' });
                 logger.info(
-                    { extra: { context: options?.context, error: safe(options?.parseError)(error) } },
+                    { extra: { context: options?.context, error: await safe(options?.parseError)(error) } },
                     `${scope}.${method}.error`,
                 );
                 throw error;
