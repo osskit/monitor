@@ -20,6 +20,22 @@ export const monitor = createMonitor('metrics');
 const result = await monitor('query', async () => db.query());
 ```
 
+## With Options
+```
+import createMonitor from '@osskit/monitor'
+
+export const monitor = createMonitor('metrics');
+
+// Context
+const result = (id: string) => await monitor('query', async () => db.query(id), {context: {id});
+
+// Parse Results
+const logResults = (id: string) => await monitor('query', async () => db.query(id), {logResult: true, parseResult: (res) => res.prop});
+
+// Parse Error
+const errored = (id: string) => await monitor('query', async () => db.query(id), {logResult: true, parseError: (e) => e.statusCode});
+```
+
 ## API
 
 ### monitor(scope)
@@ -33,4 +49,4 @@ The scope of the application's metrics
 Returns: `(method: string, callable: () => T, options?: MonitorOptions)`
 
 #### options
-Type: `{ context: Record<string, any> }`
+Type: `{ context: Record<string, any>, logResult: boolean, parseResult: (value: T) => any; parseError: (error: T) => any }`
