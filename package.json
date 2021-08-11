@@ -1,6 +1,6 @@
 {
     "name": "@osskit/monitor",
-    "version": "0.0.13-beta.0",
+    "version": "0.0.13-beta.1",
     "repository": {
         "url": "https://github.com/osskit/monitor"
     },
@@ -23,7 +23,7 @@
         "prom-client": "^13.2.0"
     },
     "peerDependencies": {
-        "prom-client": "^13.2.0"
+        "prom-client": "<=13.2.0"
     },
     "devDependencies": {
         "@types/express": "^4.17.13",
