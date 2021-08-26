@@ -65,7 +65,7 @@ const monitor = <T, TError>(scope: string, method: string, callable: () => T, op
         }
 
         return result
-            .then((promiseResult: Unpromisify<T>) => {
+            .then(async (promiseResult: Unpromisify<T>) => {
                 const executionTime = stopTimer();
 
                 counter.inc({ method, result: 'success' });
@@ -75,7 +75,9 @@ const monitor = <T, TError>(scope: string, method: string, callable: () => T, op
                         extra: {
                             context: options?.context,
                             executionTime,
-                            executionResult: options?.logResult ? safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
+                            executionResult: options?.logResult
+                                ? await safe(options?.parseResult)(promiseResult)
+                                : 'NOT_LOGGED',
                         },
                     },
                     `${scope}.${method}.success`,

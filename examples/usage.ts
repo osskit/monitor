@@ -113,5 +113,13 @@ monitor(
     () => {
         return Promise.reject('foo');
     },
-    { parseError: (_err: string) => Promise.resolve("hi")},
+    { parseError: (_err: string) => Promise.resolve('hi') },
 ).catch(() => {});
+
+monitor(
+    'parse_result_promise_within_a_promise',
+    () => {
+        return Promise.resolve({ foo: Promise.resolve('foo!!!!') });
+    },
+    { logResult: true, parseResult: (x) => x.foo },
+);
