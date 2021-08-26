@@ -1,6 +1,6 @@
 import { Counter, Histogram } from 'prom-client';
-import { safe } from 'execute-safe';
 import logger from './logger';
+import safe from './safe';
 
 import type { Unpromisify, MonitorOptions } from './types';
 

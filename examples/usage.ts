@@ -117,9 +117,17 @@ monitor(
 ).catch(() => {});
 
 monitor(
-    'parse_result_promise_within_a_promise',
+    'parse_result_promise_within_a_resolved_promise',
     () => {
         return Promise.resolve({ foo: Promise.resolve('foo!!!!') });
+    },
+    { logResult: true, parseResult: (x) => x.foo },
+);
+
+monitor(
+    'parse_result_promise_within_a_rejected_promise',
+    () => {
+        return Promise.resolve({ foo: Promise.reject('foo!!!!') });
     },
     { logResult: true, parseResult: (x) => x.foo },
 );

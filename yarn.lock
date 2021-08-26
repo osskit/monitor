@@ -1265,11 +1265,6 @@ execa@^5.0.0:
     signal-exit "^3.0.3"
     strip-final-newline "^2.0.0"
 
-execute-safe@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/execute-safe/-/execute-safe-0.0.2.tgz#07d36411d690e91a98749e51f29c18f03f07c349"
-  integrity sha512-sl/oFKROteKMM+jHEFAYmVEdWORQo6/4BFiPrjJpW90bD40M1IUQAAFUbWuQP3IKDQWQrRMUqmrRg7FHgS7VfQ==
-
 express-prom-bundle@^6.3.6:
   version "6.3.6"
   resolved "https://registry.yarnpkg.com/express-prom-bundle/-/express-prom-bundle-6.3.6.tgz#c8da1c1024edfcc54953c365991aca57ffd0cfda"
