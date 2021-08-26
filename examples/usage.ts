@@ -22,7 +22,7 @@ monitor(
 
 monitor('async_method_with_string_return_value', () => {
     return Promise.resolve('foo');
-});
+}).then((result) => console.log('hi 1111111!!!! ' + result));
 
 monitor('method_with_object_return_type', () => {
     return {
@@ -79,7 +79,7 @@ monitor(
         return Promise.resolve({ foo: 'bar', baz: 1 });
     },
     { logResult: true, parseResult: (x) => x.baz },
-);
+).then((result) => console.log(`hi 222222!!!! ${result.baz}`));
 
 try {
     monitor(

@@ -6,11 +6,11 @@ export default (fn: any) => (r: any) => {
             if (result instanceof Promise) {
                 return result.catch(() => r);
             }
-            
-return result;
+
+            return result;
         }
-        
-return r;
+
+        return r;
     } catch {
         return r;
     }
