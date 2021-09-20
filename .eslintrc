@@ -1,5 +1,5 @@
 {
-  "extends": ["noamokman", "prettier"],
+  "extends": ["@osskit", "prettier"],
   "ignorePatterns": [
     "examples/**"
   ],
