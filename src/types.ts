@@ -6,4 +6,9 @@ export interface MonitorOptions<T, TError> {
   parseError?: (e: TError) => any;
 }
 
+export interface InitOptions<T, TError> {
+  scope?: string;
+  options?: MonitorOptions<T, TError>;
+}
+
 export type Unpromisify<T> = T extends PromiseLike<infer U> ? U : T;

@@ -2,7 +2,7 @@ import { Counter, Histogram } from 'prom-client';
 import logger from './logger';
 import safe from './safe';
 
-import type { Unpromisify, MonitorOptions } from './types';
+import type { Unpromisify, MonitorOptions, InitOptions } from './types';
 
 const histograms: Record<string, Histogram<string>> = {};
 
@@ -105,7 +105,6 @@ const monitor = <T, TError>(scope: string, method: string, callable: () => T, op
   }
 };
 
-export const createMonitor =
-  (scope = 'monitor') =>
+export const createMonitor = <T, TError>({ scope = 'monitor', ...initOptions }: InitOptions<T, TError>) =>
   <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
-    monitor(scope, method, callable, options);
+    monitor(scope, method, callable, { ...initOptions, ...options });
