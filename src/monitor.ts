@@ -2,7 +2,7 @@ import { Counter, Histogram } from 'prom-client';
 import logger from './logger';
 import safe from './safe';
 
-import type { Unpromisify, MonitorOptions, InitOptions } from './types';
+import type { Unpromisify, MonitorOptions, InitOptions, MonitorArgs } from './types';
 
 const histograms: Record<string, Histogram<string>> = {};
 
@@ -28,15 +28,18 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
   return counter;
 };
 
-const monitor = <T, TError>(scope: string, method: string, callable: () => T, options?: MonitorOptions<T, TError>) => {
+const monitor = <T, TError>({ scope: monitorScope, method, callable, options }: MonitorArgs<T, TError>) => {
+  const metric = monitorScope ?? method;
+  const scope = monitorScope ? `${monitorScope}.${method}` : method;
+
   const counter = createCounter({
-    name: `${scope}_count`,
-    help: `${scope}_count`,
+    name: `${metric}_count`,
+    help: `${metric}_count`,
     labelNames: ['method', 'result'],
   });
   const histogram = createHistogram({
-    name: `${scope}_execution_time`,
-    help: `${scope}_execution_time`,
+    name: `${metric}_execution_time`,
+    help: `${metric}_execution_time`,
     labelNames: ['method', 'result'],
   });
 
@@ -50,7 +53,7 @@ const monitor = <T, TError>(scope: string, method: string, callable: () => T, op
             context: options?.context,
           },
         },
-        `${scope}.${method}.start`,
+        `${scope}.start`,
       );
     }
     const result = callable();
@@ -68,7 +71,7 @@ const monitor = <T, TError>(scope: string, method: string, callable: () => T, op
             executionResult: options?.logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
           },
         },
-        `${scope}.${method}.success`,
+        `${scope}.success`,
       );
 
       return result;
@@ -88,23 +91,27 @@ const monitor = <T, TError>(scope: string, method: string, callable: () => T, op
               executionResult: options?.logResult ? await safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
             },
           },
-          `${scope}.${method}.success`,
+          `${scope}.success`,
         );
 
         return promiseResult;
       })
       .catch(async (error: Error) => {
         counter.inc({ method, result: 'error' });
-        logger.info({ extra: { context: options?.context, error: await safe(options?.parseError)(error) } }, `${scope}.${method}.error`);
+        logger.info({ extra: { context: options?.context, error: await safe(options?.parseError)(error) } }, `${scope}.error`);
         throw error;
       }) as any as T;
   } catch (error) {
     counter.inc({ method, result: 'error' });
-    logger.info({ extra: { context: options?.context, error: safe(options?.parseError)(error) } }, `${scope}.${method}.error`);
+    logger.info({ extra: { context: options?.context, error: safe(options?.parseError)(error) } }, `${scope}.error`);
     throw error;
   }
 };
 
-export const createMonitor = <T, TError>({ scope = 'monitor', ...initOptions }: InitOptions<T, TError>) =>
+export const createMonitor =
+  <T, TError>({ scope, ...initOptions }: InitOptions<T, TError>) =>
   <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
-    monitor(scope, method, callable, { ...initOptions, ...options });
+    monitor({ scope, method, callable, options: { ...initOptions, ...options } });
+
+export const unscoped = <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
+  monitor({ method, callable, options });

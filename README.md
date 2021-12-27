@@ -13,13 +13,18 @@ yarn add @osskit/monitor
 
 ## Usage
 ```
-import createMonitor from '@osskit/monitor'
+import {createMonitor} from '@osskit/monitor'
 
-export const monitor = createMonitor('metrics');
+export const monitor = createMonitor({scope: 'metrics'});
 
 const result = await monitor('query', async () => db.query());
 ```
+## Unscoped
+```
+import {unscoped as monitor} from '@osskit/monitor'
 
+const result = await monitor('query', async () => db.query());
+```
 ## With Options
 ```
 import createMonitor from '@osskit/monitor'

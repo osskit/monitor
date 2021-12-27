@@ -1,6 +1,10 @@
-import createMonitor from '../src/index';
+import { createMonitor, unscoped as monitori } from '../src/index';
 
-const monitor = createMonitor();
+const monitor = createMonitor({ scope: 'process' });
+
+monitori('some_method', () => {
+  return true;
+});
 
 monitor('some_method', () => {
   return true;
