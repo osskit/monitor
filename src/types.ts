@@ -7,7 +7,7 @@ export interface MonitorOptions<T, TError> {
 }
 
 export interface InitOptions<T, TError> {
-  scope?: string;
+  scope: string;
   options?: MonitorOptions<T, TError>;
 }
 
