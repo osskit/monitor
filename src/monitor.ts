@@ -113,5 +113,5 @@ export const createMonitor =
   <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
     monitor({ scope, method, callable, options: { ...initOptions, ...options } });
 
-export const unscoped = <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
+export default <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
   monitor({ method, callable, options });

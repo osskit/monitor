@@ -1,2 +1,2 @@
-export { createMonitor, unscoped } from './monitor';
+export { default, createMonitor } from './monitor';
 export * from './types';

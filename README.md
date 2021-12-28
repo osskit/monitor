@@ -12,6 +12,7 @@ yarn add @osskit/monitor
 ```
 
 ## Usage
+## Scoped
 ```
 import {createMonitor} from '@osskit/monitor'
 
@@ -21,7 +22,7 @@ const result = await monitor('query', async () => db.query());
 ```
 ## Unscoped
 ```
-import {unscoped as monitor} from '@osskit/monitor'
+import monitor from '@osskit/monitor'
 
 const result = await monitor('query', async () => db.query());
 ```
