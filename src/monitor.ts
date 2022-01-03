@@ -68,7 +68,7 @@ const monitor = <T, TError>({ scope: monitorScope, method, callable, options }: 
           extra: {
             context: options?.context,
             executionTime,
-            executionResult: options?.logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
+            executionResult: safe(options?.parseResult)(result),
           },
         },
         `${scope}.success`,
@@ -88,7 +88,7 @@ const monitor = <T, TError>({ scope: monitorScope, method, callable, options }: 
             extra: {
               context: options?.context,
               executionTime,
-              executionResult: options?.logResult ? await safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
+              executionResult: await safe(options?.parseResult)(promiseResult),
             },
           },
           `${scope}.success`,
@@ -109,7 +109,7 @@ const monitor = <T, TError>({ scope: monitorScope, method, callable, options }: 
 };
 
 export const createMonitor =
-  <T, TError>({ scope, ...initOptions }: InitOptions<T, TError>) =>
+  <TError>({ scope, ...initOptions }: InitOptions<TError>) =>
   <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
     monitor({ scope, method, callable, options: { ...initOptions, ...options } });
 
