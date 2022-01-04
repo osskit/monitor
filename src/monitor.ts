@@ -2,7 +2,7 @@ import { Counter, Histogram } from 'prom-client';
 import logger from './logger';
 import safe from './safe';
 
-import type { Unpromisify, MonitorOptions, InitOptions, MonitorArgs } from './types';
+import type { Unpromisify, MonitorOptions, InitOptions, Monitor } from './types';
 
 const histograms: Record<string, Histogram<string>> = {};
 
@@ -28,7 +28,7 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
   return counter;
 };
 
-const monitor = <T, TError>({ scope: monitorScope, method, callable, options }: MonitorArgs<T, TError>) => {
+const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
   const metric = monitorScope ?? method;
   const scope = monitorScope ? `${monitorScope}.${method}` : method;
 
@@ -109,9 +109,8 @@ const monitor = <T, TError>({ scope: monitorScope, method, callable, options }: 
 };
 
 export const createMonitor =
-  <TError>({ scope, ...initOptions }: InitOptions<TError>) =>
-  <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
-    monitor({ scope, method, callable, options: { ...initOptions, ...options } });
+  ({ scope, ...initOptions }: InitOptions) =>
+  <T>(method: string, callable: () => T, options?: MonitorOptions<T>) =>
+    monitor({ scope, method, callable, options: { ...initOptions.options, ...options } });
 
-export default <T, TError>(method: string, callable: () => T, options?: MonitorOptions<T, TError>) =>
-  monitor({ method, callable, options });
+export default <T>(method: string, callable: () => T, options?: MonitorOptions<T>) => monitor({ method, callable, options });
