@@ -1,6 +1,6 @@
 import { createMonitor, default as defaultMonitor } from '../src/index';
 
-const monitor = createMonitor({ scope: 'process' });
+const monitor = createMonitor({ scope: 'process', options: { logExecutionStart: true } });
 
 defaultMonitor('some_method', () => {
   return true;
