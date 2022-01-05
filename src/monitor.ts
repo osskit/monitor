@@ -31,7 +31,7 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
 
 const global: GlobalOptions = {
   logExecutionStart: false,
-  logResult: true,
+  logResult: false,
 };
 
 export const setGlobalOptions = ({ logExecutionStart, logResult }: GlobalOptions) => {
