@@ -1,6 +1,9 @@
 import { createMonitor, default as defaultMonitor } from '../src/index';
+import { setGlobalOptions } from '../src/monitor';
 
-const monitor = createMonitor({ scope: 'process', options: { logExecutionStart: true } });
+setGlobalOptions({ logExecutionStart: true, logResult: true });
+
+const monitor = createMonitor({ scope: 'process' });
 
 defaultMonitor('some_method', () => {
   return true;
@@ -128,10 +131,6 @@ monitor(
   { parseResult: (x) => x.foo },
 );
 
-monitor(
-  'log_execution_start',
-  () => {
-    return 5;
-  },
-  { logExecutionStart: true },
-);
+monitor('log_execution_start', () => {
+  return 5;
+});

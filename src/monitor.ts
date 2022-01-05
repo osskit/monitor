@@ -3,6 +3,7 @@ import logger from './logger';
 import safe from './safe';
 
 import type { Unpromisify, MonitorOptions, InitOptions, Monitor } from './types';
+import type { GlobalOptions } from '.';
 
 const histograms: Record<string, Histogram<string>> = {};
 
@@ -28,6 +29,16 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
   return counter;
 };
 
+const global: GlobalOptions = {
+  logExecutionStart: false,
+  logResult: true,
+};
+
+export const setGlobalOptions = ({ logExecutionStart, logResult }: GlobalOptions) => {
+  global.logExecutionStart = logExecutionStart;
+  global.logResult = logResult;
+};
+
 const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
   const metric = monitorScope ?? method;
   const scope = monitorScope ? `${monitorScope}.${method}` : method;
@@ -46,7 +57,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
   const stopTimer = histogram.startTimer();
 
   try {
-    if (options?.logExecutionStart) {
+    if (global?.logExecutionStart) {
       logger.info(
         {
           extra: {
@@ -68,7 +79,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
           extra: {
             context: options?.context,
             executionTime,
-            executionResult: safe(options?.parseResult)(result),
+            executionResult: global.logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
           },
         },
         `${scope}.success`,
@@ -88,7 +99,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
             extra: {
               context: options?.context,
               executionTime,
-              executionResult: await safe(options?.parseResult)(promiseResult),
+              executionResult: global.logResult ? await safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
             },
           },
           `${scope}.success`,
