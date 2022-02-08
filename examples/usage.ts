@@ -1,7 +1,10 @@
-import { createMonitor, default as defaultMonitor } from '../src/index';
-import { setGlobalOptions } from '../src/monitor';
+import { createMonitor, default as defaultMonitor, setGlobalContext } from '../src/index';
+import { setGlobalOptions } from '../src';
+
+const getHeader = () => ({ header: 'header-value' });
 
 setGlobalOptions({ logExecutionStart: true, logResult: true });
+setGlobalContext(getHeader);
 
 const monitor = createMonitor({ scope: 'process' });
 

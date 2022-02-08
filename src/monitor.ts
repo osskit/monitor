@@ -34,6 +34,12 @@ const global: GlobalOptions = {
   logResult: false,
 };
 
+let getGlobalContext: () => Record<string, string>;
+
+export const setGlobalContext = (value: () => Record<string, string>) => {
+  getGlobalContext = value;
+};
+
 export const setGlobalOptions = ({ logExecutionStart, logResult }: GlobalOptions) => {
   global.logExecutionStart = logExecutionStart;
   global.logResult = logResult;
@@ -61,7 +67,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       logger.info(
         {
           extra: {
-            context: options?.context,
+            context: { ...getGlobalContext(), ...options?.context },
           },
         },
         `${scope}.start`,
@@ -77,7 +83,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       logger.info(
         {
           extra: {
-            context: options?.context,
+            context: { ...getGlobalContext(), ...options?.context },
             executionTime,
             executionResult: global.logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
           },
@@ -97,7 +103,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
         logger.info(
           {
             extra: {
-              context: options?.context,
+              context: { ...getGlobalContext(), ...options?.context },
               executionTime,
               executionResult: global.logResult ? await safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
             },
@@ -109,12 +115,18 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       })
       .catch(async (error: Error) => {
         counter.inc({ method, result: 'error' });
-        logger.info({ extra: { context: options?.context, error: await safe(options?.parseError)(error) } }, `${scope}.error`);
+        logger.info(
+          { extra: { context: { ...getGlobalContext(), ...options?.context }, error: await safe(options?.parseError)(error) } },
+          `${scope}.error`,
+        );
         throw error;
       }) as any as T;
   } catch (error) {
     counter.inc({ method, result: 'error' });
-    logger.info({ extra: { context: options?.context, error: safe(options?.parseError)(error) } }, `${scope}.error`);
+    logger.info(
+      { extra: { context: { ...getGlobalContext(), ...options?.context }, error: safe(options?.parseError)(error) } },
+      `${scope}.error`,
+    );
     throw error;
   }
 };
