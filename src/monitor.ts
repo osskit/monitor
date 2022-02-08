@@ -34,12 +34,10 @@ const global: GlobalOptions = {
   logResult: false,
 };
 
-let globalContext: () => Record<string, string>;
-
-const getGlobalContext = () => globalContext();
+let getGlobalContext: () => Record<string, string>;
 
 export const setGlobalContext = (value: () => Record<string, string>) => {
-  globalContext = value;
+  getGlobalContext = value;
 };
 
 export const setGlobalOptions = ({ logExecutionStart, logResult }: GlobalOptions) => {
