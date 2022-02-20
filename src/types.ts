@@ -1,7 +1,7 @@
 export interface GlobalOptions {
   logExecutionStart: boolean;
   logResult: boolean;
-  parseError?: <T = any, K = any>(e: T) => K;
+  parseError?: (e: any) => any;
 }
 
 export interface InitOptions {
