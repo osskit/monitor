@@ -32,6 +32,7 @@ const createCounter = ({ name, help, labelNames }: { name: string; help: string;
 const global: GlobalOptions = {
   logExecutionStart: false,
   logResult: false,
+  parseError: (e: any) => e,
 };
 
 let getGlobalContext: () => Record<string, string> | undefined;
@@ -40,9 +41,10 @@ export const setGlobalContext = (value: () => Record<string, string>) => {
   getGlobalContext = value;
 };
 
-export const setGlobalOptions = ({ logExecutionStart, logResult }: GlobalOptions) => {
+export const setGlobalOptions = ({ logExecutionStart, logResult, parseError }: GlobalOptions) => {
   global.logExecutionStart = logExecutionStart;
   global.logResult = logResult;
+  global.parseError = parseError;
 };
 
 const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
@@ -116,15 +118,23 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       .catch(async (error: Error) => {
         counter.inc({ method, result: 'error' });
         logger.info(
-          { extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: await safe(options?.parseError)(error) } },
+          {
+            extra: {
+              context: { ...getGlobalContext?.(), ...options?.context },
+              error: await safe(options?.parseError ?? global.parseError)(error),
+            },
+          },
           `${scope}.error`,
         );
         throw error;
       }) as any as T;
   } catch (error) {
     counter.inc({ method, result: 'error' });
+    console.log('22222222');
     logger.info(
-      { extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(options?.parseError)(error) } },
+      {
+        extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(global.parseError)(error) },
+      },
       `${scope}.error`,
     );
     throw error;

@@ -3,7 +3,7 @@ import { setGlobalOptions } from '../src';
 
 const getHeader = () => ({ header: 'header-value' });
 
-setGlobalOptions({ logExecutionStart: true, logResult: true });
+setGlobalOptions({ logExecutionStart: true, logResult: true, parseError: (e: any): any => ({ message: e.message, stack: e.stack }) });
 setGlobalContext(getHeader);
 
 const monitor = createMonitor({ scope: 'process' });
