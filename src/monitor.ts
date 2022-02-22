@@ -130,7 +130,6 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       }) as any as T;
   } catch (error) {
     counter.inc({ method, result: 'error' });
-    console.log('22222222');
     logger.info(
       {
         extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(global.parseError)(error) },
