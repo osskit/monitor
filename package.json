@@ -16,6 +16,9 @@
   "engines": {
     "node": ">=16.0.0"
   },
+  "peerDependencies": {
+    "prom-client": ">=14.0.1"
+  },
   "dependencies": {
     "@osskit/eslint-config": "^0.0.1",
     "@osskit/prettier-config": "^0.0.1",
