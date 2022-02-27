@@ -12,6 +12,7 @@ export interface InitOptions {
 }
 export interface MonitorOptions<T> {
   context?: Record<string, any>;
+  logExecutionStart?: boolean;
   parseResult?: (r: Unpromisify<T>) => any;
   parseError?: (e: any) => any;
 }

@@ -65,7 +65,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
   const stopTimer = histogram.startTimer();
 
   try {
-    if (global?.logExecutionStart) {
+    if (global?.logExecutionStart || options?.logExecutionStart) {
       logger.info(
         {
           extra: {
