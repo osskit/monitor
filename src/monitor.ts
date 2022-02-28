@@ -64,8 +64,12 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
 
   const stopTimer = histogram.startTimer();
 
+  const logExecutionStart = options?.logExecutionStart ?? global.logExecutionStart;
+  const logResult = options?.logResult ?? global.logResult;
+  const parseError = options?.parseError ?? global.parseError;
+
   try {
-    if (global?.logExecutionStart) {
+    if (logExecutionStart) {
       logger.info(
         {
           extra: {
@@ -87,7 +91,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
           extra: {
             context: { ...getGlobalContext?.(), ...options?.context },
             executionTime,
-            executionResult: global.logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
+            executionResult: logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
           },
         },
         `${scope}.success`,
@@ -107,7 +111,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
             extra: {
               context: { ...getGlobalContext?.(), ...options?.context },
               executionTime,
-              executionResult: global.logResult ? await safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
+              executionResult: logResult ? await safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
             },
           },
           `${scope}.success`,
@@ -121,7 +125,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
           {
             extra: {
               context: { ...getGlobalContext?.(), ...options?.context },
-              error: await safe(options?.parseError ?? global.parseError)(error),
+              error: await safe(parseError)(error),
             },
           },
           `${scope}.error`,

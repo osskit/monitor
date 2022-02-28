@@ -1,7 +1,4 @@
-export interface GlobalOptions {
-  logExecutionStart: boolean;
-  logResult: boolean;
-  parseError?: (e: any) => any;
+export interface GlobalOptions extends MonitorOptionsBase {
 }
 
 export interface InitOptions {
@@ -10,10 +7,16 @@ export interface InitOptions {
     parseError?: (e: any) => any;
   };
 }
-export interface MonitorOptions<T> {
+
+export interface MonitorOptionsBase {
   context?: Record<string, any>;
-  parseResult?: (r: Unpromisify<T>) => any;
+  logResult?: boolean;
+  logExecutionStart?: boolean;
   parseError?: (e: any) => any;
+}
+
+export interface MonitorOptions<T> extends MonitorOptionsBase {
+  parseResult?: (r: Unpromisify<T>) => any;
 }
 
 export type Unpromisify<T> = T extends PromiseLike<infer U> ? U : T;
