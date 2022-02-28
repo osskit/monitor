@@ -64,7 +64,6 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
 
   const stopTimer = histogram.startTimer();
 
-  const context = { ...global.context, ...options?.context };
   const logExecutionStart = options?.logExecutionStart ?? global.logExecutionStart;
   const logResult = options?.logResult ?? global.logResult;
   const parseError = options?.parseError ?? global.parseError;
@@ -74,7 +73,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       logger.info(
         {
           extra: {
-            context: { ...getGlobalContext?.(), ...context },
+            context: { ...getGlobalContext?.(), ...options?.context },
           },
         },
         `${scope}.start`,
@@ -90,7 +89,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       logger.info(
         {
           extra: {
-            context: { ...getGlobalContext?.(), ...context },
+            context: { ...getGlobalContext?.(), ...options?.context },
             executionTime,
             executionResult: logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
           },
@@ -110,7 +109,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
         logger.info(
           {
             extra: {
-              context: { ...getGlobalContext?.(), ...context },
+              context: { ...getGlobalContext?.(), ...options?.context },
               executionTime,
               executionResult: logResult ? await safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
             },
@@ -125,7 +124,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
         logger.info(
           {
             extra: {
-              context: { ...getGlobalContext?.(), ...context },
+              context: { ...getGlobalContext?.(), ...options?.context },
               error: await safe(parseError)(error),
             },
           },
@@ -137,7 +136,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
     counter.inc({ method, result: 'error' });
     logger.info(
       {
-        extra: { context: { ...getGlobalContext?.(), ...context }, error: safe(global.parseError)(error) },
+        extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(global.parseError)(error) },
       },
       `${scope}.error`,
     );
