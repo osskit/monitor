@@ -2,8 +2,10 @@ import express, { Response } from 'express';
 import promBundle from 'express-prom-bundle';
 import { createServer } from 'http';
 
-import { createMonitor } from '../src/index';
+import { createMonitor, setGlobalOptions } from '../src/index';
+import { init } from '../src/prometheus';
 
+setGlobalOptions({ metrics: init });
 const monitor = createMonitor({ scope: 'process' });
 
 const app = express()

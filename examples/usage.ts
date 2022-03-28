@@ -1,9 +1,15 @@
 import { createMonitor, default as defaultMonitor, setGlobalContext } from '../src/index';
 import { setGlobalOptions } from '../src';
+import { init } from '../src/prometheus';
 
 const getHeader = () => ({ header: 'header-value' });
 
-setGlobalOptions({ logExecutionStart: true, logResult: true, parseError: (e: any): any => ({ message: e.message, stack: e.stack }) });
+setGlobalOptions({
+  logExecutionStart: true,
+  logResult: true,
+  parseError: (e: any): any => ({ message: e.message, stack: e.stack }),
+  metrics: init,
+});
 setGlobalContext(getHeader);
 
 const monitor = createMonitor({ scope: 'process' });
