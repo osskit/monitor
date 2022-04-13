@@ -3,7 +3,12 @@ import { setGlobalOptions } from '../src';
 
 const getHeader = () => ({ header: 'header-value' });
 
-setGlobalOptions({ logExecutionStart: true, logResult: true, parseError: (e: any): any => ({ message: e.message, stack: e.stack }) });
+setGlobalOptions({
+  logExecutionStart: true,
+  logResult: true,
+  parseError: (e: any): any => ({ message: e.message, stack: e.stack }),
+  prometheusBuckets: [0.03, 0.1, 0.3, 0.7, 1.5, 10],
+});
 setGlobalContext(getHeader);
 
 const monitor = createMonitor({ scope: 'process' });
