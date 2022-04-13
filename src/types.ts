@@ -1,4 +1,5 @@
 export interface GlobalOptions extends MonitorOptionsBase {
+  prometheusBuckets?: number[];
 }
 
 export interface InitOptions {
