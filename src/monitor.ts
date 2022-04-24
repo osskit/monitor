@@ -53,6 +53,8 @@ export const setGlobalOptions = ({ logExecutionStart, logResult, parseError, pro
   global.prometheusBuckets = prometheusBuckets;
 };
 
+const isAPromiseLike = <T>(obj: any): obj is PromiseLike<T> => typeof obj === 'object' && typeof obj.then === 'function';
+
 const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
   const metric = monitorScope ?? method;
   const scope = monitorScope ? `${monitorScope}.${method}` : method;
@@ -85,8 +87,28 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
         `${scope}.start`,
       );
     }
+    const result = callable();
 
-    return Promise.resolve(callable())
+    if (!isAPromiseLike<T>(result)) {
+      const executionTime = stopTimer();
+
+      counter.inc({ method, result: 'success' });
+      histogram.observe({ method, result: 'success' }, executionTime);
+      logger.info(
+        {
+          extra: {
+            context: { ...getGlobalContext?.(), ...options?.context },
+            executionTime,
+            executionResult: logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
+          },
+        },
+        `${scope}.success`,
+      );
+
+      return result;
+    }
+
+    return Promise.resolve(result)
       .then(async (promiseResult) => {
         const executionTime = stopTimer();
 
@@ -117,7 +139,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
           `${scope}.error`,
         );
         throw error;
-      });
+      }) as any as T;
   } catch (error) {
     counter.inc({ method, result: 'error' });
     logger.info(
