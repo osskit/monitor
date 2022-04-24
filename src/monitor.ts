@@ -2,7 +2,7 @@ import { Counter, Histogram } from 'prom-client';
 import logger from './logger';
 import safe from './safe';
 
-import type { Unpromisify, MonitorOptions, InitOptions, Monitor } from './types';
+import type { MonitorOptions, InitOptions, Monitor } from './types';
 import type { GlobalOptions } from '.';
 
 const histograms: Record<string, Histogram<string>> = {};
@@ -85,29 +85,9 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
         `${scope}.start`,
       );
     }
-    const result = callable();
 
-    if (!(result instanceof Promise)) {
-      const executionTime = stopTimer();
-
-      counter.inc({ method, result: 'success' });
-      histogram.observe({ method, result: 'success' }, executionTime);
-      logger.info(
-        {
-          extra: {
-            context: { ...getGlobalContext?.(), ...options?.context },
-            executionTime,
-            executionResult: logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
-          },
-        },
-        `${scope}.success`,
-      );
-
-      return result;
-    }
-
-    return result
-      .then(async (promiseResult: Unpromisify<T>) => {
+    return Promise.resolve(callable())
+      .then(async (promiseResult) => {
         const executionTime = stopTimer();
 
         counter.inc({ method, result: 'success' });
@@ -137,7 +117,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
           `${scope}.error`,
         );
         throw error;
-      }) as any as T;
+      });
   } catch (error) {
     counter.inc({ method, result: 'error' });
     logger.info(
