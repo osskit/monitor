@@ -1,4 +1,5 @@
 import { Counter, Histogram } from 'prom-client';
+import is from '@sindresorhus/is';
 import logger from './logger';
 import safe from './safe';
 
@@ -53,8 +54,6 @@ export const setGlobalOptions = ({ logExecutionStart, logResult, parseError, pro
   global.prometheusBuckets = prometheusBuckets;
 };
 
-const isAPromiseLike = <T>(obj: any): obj is PromiseLike<T> => typeof obj === 'object' && typeof obj.then === 'function';
-
 const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
   const metric = monitorScope ?? method;
   const scope = monitorScope ? `${monitorScope}.${method}` : method;
@@ -89,7 +88,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
     }
     const result = callable();
 
-    if (!isAPromiseLike<T>(result)) {
+    if (!is.promise(result)) {
       const executionTime = stopTimer();
 
       counter.inc({ method, result: 'success' });
@@ -108,7 +107,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       return result;
     }
 
-    return Promise.resolve(result)
+    return result
       .then(async (promiseResult) => {
         const executionTime = stopTimer();
 

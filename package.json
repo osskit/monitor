@@ -23,6 +23,7 @@
     "prom-client": ">=14.0.1"
   },
   "dependencies": {
+    "@sindresorhus/is": "^4.6.0",
     "pino": "^7.9.2"
   },
   "devDependencies": {
