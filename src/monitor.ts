@@ -1,8 +1,9 @@
 import { Counter, Histogram } from 'prom-client';
+import is from '@sindresorhus/is';
 import logger from './logger';
 import safe from './safe';
 
-import type { Unpromisify, MonitorOptions, InitOptions, Monitor } from './types';
+import type { MonitorOptions, InitOptions, Monitor } from './types';
 import type { GlobalOptions } from '.';
 
 const histograms: Record<string, Histogram<string>> = {};
@@ -87,7 +88,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
     }
     const result = callable();
 
-    if (!(result instanceof Promise)) {
+    if (!is.promise(result)) {
       const executionTime = stopTimer();
 
       counter.inc({ method, result: 'success' });
@@ -107,7 +108,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
     }
 
     return result
-      .then(async (promiseResult: Unpromisify<T>) => {
+      .then(async (promiseResult) => {
         const executionTime = stopTimer();
 
         counter.inc({ method, result: 'success' });
