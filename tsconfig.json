@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["esnext"],
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "ES2020",
+    "moduleResolution": "node",
     "outDir": "dist",
     "removeComments": true,
     "strict": true,
@@ -18,6 +18,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "experimentalDecorators": true
+  },
+  "ts-node": {
+    "esm": true
   },
   "include": ["src/**/*"]
 }

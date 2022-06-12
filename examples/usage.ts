@@ -1,4 +1,4 @@
-import { createMonitor, default as defaultMonitor, setGlobalContext } from '../src/index';
+import { createMonitor, default as defaultMonitor, setGlobalContext } from '../src/index.js';
 import { setGlobalOptions } from '../src';
 
 const getHeader = () => ({ header: 'header-value' });
