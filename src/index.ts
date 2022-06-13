@@ -1,2 +1,2 @@
-export { default, createMonitor, setGlobalOptions, setGlobalContext } from './monitor';
-export * from './types';
+export { default, createMonitor, setGlobalOptions, setGlobalContext } from './monitor.js';
+export * from './types.js';

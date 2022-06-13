@@ -1,7 +1,7 @@
 import { Counter, Histogram } from 'prom-client';
 import is from '@sindresorhus/is';
-import logger from './logger';
-import safe from './safe';
+import logger from './logger.js';
+import safe from './safe.js';
 
 import type { MonitorOptions, InitOptions, Monitor } from './types';
 import type { GlobalOptions } from '.';
