@@ -1,4 +1,4 @@
-import { GlobalOptions } from './types.js';
+import type { GlobalOptions } from './types.js';
 import defaultLogger from './logger.js';
 
 export const global: GlobalOptions = {

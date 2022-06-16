@@ -1,14 +1,9 @@
 import is from '@sindresorhus/is';
 import { global } from './globalOptions.js';
 import { createCounter, createHistogram } from './prometheus.js';
+import { getGlobalContext } from './globalContext.js';
 import safe from './safe.js';
 import type { MonitorOptions, InitOptions, Monitor } from './types';
-
-let getGlobalContext: () => Record<string, string> | undefined;
-
-export const setGlobalContext = (value: () => Record<string, string>) => {
-  getGlobalContext = value;
-};
 
 const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
   const metric = monitorScope ?? method;

@@ -1,5 +1,5 @@
 import { Counter, Histogram } from 'prom-client';
-import { global } from './globalOptions';
+import { global } from './globalOptions.js';
 
 const histograms: Record<string, Histogram<string>> = {};
 
