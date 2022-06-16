@@ -1,5 +1,10 @@
 import is from '@sindresorhus/is';
-import { global } from './globalOptions.js';
+import {
+  logger,
+  logResult as globalLogResult,
+  logExecutionStart as globalLogExecutionStart,
+  parseError as globalParseError,
+} from './globalOptions.js';
 import { createCounter, createHistogram } from './prometheus.js';
 import { getGlobalContext } from './globalContext.js';
 import safe from './safe.js';
@@ -22,13 +27,13 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
 
   const stopTimer = histogram.startTimer();
 
-  const logExecutionStart = options?.logExecutionStart ?? global.logExecutionStart;
-  const logResult = options?.logResult ?? global.logResult;
-  const parseError = options?.parseError ?? global.parseError;
+  const logExecutionStart = options?.logExecutionStart ?? globalLogExecutionStart;
+  const logResult = options?.logResult ?? globalLogResult;
+  const parseError = options?.parseError ?? globalParseError;
 
   try {
     if (logExecutionStart) {
-      global.logger.info(
+      logger.info(
         {
           extra: {
             context: { ...getGlobalContext?.(), ...options?.context },
@@ -44,7 +49,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
 
       counter.inc({ method, result: 'success' });
       histogram.observe({ method, result: 'success' }, executionTime);
-      global.logger.info(
+      logger.info(
         {
           extra: {
             context: { ...getGlobalContext?.(), ...options?.context },
@@ -64,7 +69,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
 
         counter.inc({ method, result: 'success' });
         histogram.observe({ method, result: 'success' }, executionTime);
-        global.logger.info(
+        logger.info(
           {
             extra: {
               context: { ...getGlobalContext?.(), ...options?.context },
@@ -79,7 +84,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       })
       .catch(async (error: Error) => {
         counter.inc({ method, result: 'error' });
-        global.logger.info(
+        logger.info(
           {
             extra: {
               context: { ...getGlobalContext?.(), ...options?.context },
@@ -92,9 +97,9 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
       }) as any as T;
   } catch (error) {
     counter.inc({ method, result: 'error' });
-    global.logger.info(
+    logger.info(
       {
-        extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(global.parseError)(error) },
+        extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(parseError)(error) },
       },
       `${scope}.error`,
     );

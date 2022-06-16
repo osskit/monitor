@@ -1,5 +1,5 @@
 import { Counter, Histogram } from 'prom-client';
-import { global } from './globalOptions.js';
+import { prometheusBuckets } from './globalOptions.js';
 
 const histograms: Record<string, Histogram<string>> = {};
 
@@ -11,7 +11,7 @@ export const createHistogram = ({ name, help, labelNames }: { name: string; help
   const histogram = new Histogram({
     name,
     help,
-    buckets: global.prometheusBuckets,
+    buckets: prometheusBuckets,
     labelNames,
   });
 

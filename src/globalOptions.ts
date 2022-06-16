@@ -1,32 +1,39 @@
+import pino from 'pino';
 import type { GlobalOptions } from './types.js';
 import defaultLogger from './logger.js';
+import BaseLogger = pino.BaseLogger;
 
-export const global: GlobalOptions = {
-  logExecutionStart: false,
-  logResult: false,
-  parseError: (e: any) => e,
-  logger: defaultLogger,
-  prometheusBuckets: [0.003, 0.03, 0.1, 0.3, 1.5, 10],
-};
+export let logResult = false;
+export let logExecutionStart = false;
+export let parseError: (e: any) => any = (e: any) => e;
+export let prometheusBuckets: number[] = [0.003, 0.03, 0.1, 0.3, 1.5, 10];
 
-export const setGlobalOptions = ({ logExecutionStart, logResult, parseError, prometheusBuckets, logger }: Partial<GlobalOptions>) => {
-  if (logger) {
-    global.logger = logger;
+export let logger: BaseLogger = defaultLogger;
+
+export const setGlobalOptions = ({
+  logExecutionStart: optionalLogExecutionStart,
+  logResult: optionalLogResult,
+  parseError: optionalParseError,
+  prometheusBuckets: optionalPrometheusBuckets,
+  logger: optionalLogger,
+}: Partial<GlobalOptions>) => {
+  if (optionalLogger) {
+    logger = optionalLogger;
   }
 
-  if (prometheusBuckets) {
-    global.prometheusBuckets = prometheusBuckets;
+  if (optionalPrometheusBuckets) {
+    prometheusBuckets = optionalPrometheusBuckets;
   }
 
-  if (typeof logExecutionStart !== 'undefined') {
-    global.logExecutionStart = logExecutionStart;
+  if (typeof optionalLogExecutionStart !== 'undefined') {
+    logExecutionStart = optionalLogExecutionStart;
   }
 
-  if (typeof logResult !== 'undefined') {
-    global.logResult = logResult;
+  if (typeof optionalLogResult !== 'undefined') {
+    logResult = optionalLogResult;
   }
 
-  if (parseError) {
-    global.parseError = parseError;
+  if (optionalParseError) {
+    parseError = optionalParseError;
   }
 };
