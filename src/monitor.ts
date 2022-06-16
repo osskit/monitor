@@ -1,6 +1,6 @@
 import { Counter, Histogram } from 'prom-client';
 import is from '@sindresorhus/is';
-import { default as defaultLogger } from './logger.js';
+import defaultLogger from './logger.js';
 import safe from './safe.js';
 
 import type { MonitorOptions, InitOptions, Monitor } from './types';

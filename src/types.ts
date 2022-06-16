@@ -1,4 +1,4 @@
-import { BaseLogger } from 'pino';
+import type { BaseLogger } from 'pino';
 
 export interface GlobalOptions extends MonitorOptionsBase {
   prometheusBuckets?: number[];
