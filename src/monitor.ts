@@ -1,6 +1,6 @@
 import { Counter, Histogram } from 'prom-client';
 import is from '@sindresorhus/is';
-import logger from './logger.js';
+import { default as defaultLogger } from './logger.js';
 import safe from './safe.js';
 
 import type { MonitorOptions, InitOptions, Monitor } from './types';
@@ -14,6 +14,7 @@ const global: GlobalOptions = {
   logExecutionStart: false,
   logResult: false,
   parseError: (e: any) => e,
+  logger: defaultLogger,
 };
 
 let getGlobalContext: () => Record<string, string> | undefined;
@@ -47,11 +48,12 @@ export const setGlobalContext = (value: () => Record<string, string>) => {
   getGlobalContext = value;
 };
 
-export const setGlobalOptions = ({ logExecutionStart, logResult, parseError, prometheusBuckets }: GlobalOptions) => {
+export const setGlobalOptions = ({ logExecutionStart, logResult, parseError, prometheusBuckets, logger }: GlobalOptions) => {
   global.logExecutionStart = logExecutionStart;
   global.logResult = logResult;
   global.parseError = parseError;
   global.prometheusBuckets = prometheusBuckets;
+  global.logger = logger;
 };
 
 const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
@@ -74,6 +76,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
   const logExecutionStart = options?.logExecutionStart ?? global.logExecutionStart;
   const logResult = options?.logResult ?? global.logResult;
   const parseError = options?.parseError ?? global.parseError;
+  const logger = global.logger ?? defaultLogger;
 
   try {
     if (logExecutionStart) {
