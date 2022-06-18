@@ -1,58 +1,14 @@
-import { Counter, Histogram } from 'prom-client';
 import is from '@sindresorhus/is';
-import logger from './logger.js';
+import {
+  logger,
+  logResult as globalLogResult,
+  logExecutionStart as globalLogExecutionStart,
+  parseError as globalParseError,
+} from './globalOptions.js';
+import { createCounter, createHistogram } from './prometheus.js';
+import { getGlobalContext } from './globalContext.js';
 import safe from './safe.js';
-
 import type { MonitorOptions, InitOptions, Monitor } from './types';
-import type { GlobalOptions } from '.';
-
-const histograms: Record<string, Histogram<string>> = {};
-
-const counters: Record<string, Counter<string>> = {};
-
-const global: GlobalOptions = {
-  logExecutionStart: false,
-  logResult: false,
-  parseError: (e: any) => e,
-};
-
-let getGlobalContext: () => Record<string, string> | undefined;
-
-const createHistogram = ({ name, help, labelNames }: { name: string; help: string; labelNames?: string[] }) => {
-  if (histograms[name]) return histograms[name];
-
-  const histogram = new Histogram({
-    name,
-    help,
-    buckets: global.prometheusBuckets?.length ? global.prometheusBuckets : [0.003, 0.03, 0.1, 0.3, 1.5, 10],
-    labelNames,
-  });
-
-  histograms[name] = histogram;
-
-  return histogram;
-};
-
-const createCounter = ({ name, help, labelNames }: { name: string; help: string; labelNames?: string[] }) => {
-  if (counters[name]) return counters[name];
-
-  const counter = new Counter({ name, help, labelNames });
-
-  counters[name] = counter;
-
-  return counter;
-};
-
-export const setGlobalContext = (value: () => Record<string, string>) => {
-  getGlobalContext = value;
-};
-
-export const setGlobalOptions = ({ logExecutionStart, logResult, parseError, prometheusBuckets }: GlobalOptions) => {
-  global.logExecutionStart = logExecutionStart;
-  global.logResult = logResult;
-  global.parseError = parseError;
-  global.prometheusBuckets = prometheusBuckets;
-};
 
 const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
   const metric = monitorScope ?? method;
@@ -71,9 +27,9 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
 
   const stopTimer = histogram.startTimer();
 
-  const logExecutionStart = options?.logExecutionStart ?? global.logExecutionStart;
-  const logResult = options?.logResult ?? global.logResult;
-  const parseError = options?.parseError ?? global.parseError;
+  const logExecutionStart = options?.logExecutionStart ?? globalLogExecutionStart;
+  const logResult = options?.logResult ?? globalLogResult;
+  const parseError = options?.parseError ?? globalParseError;
 
   try {
     if (logExecutionStart) {
@@ -143,7 +99,7 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
     counter.inc({ method, result: 'error' });
     logger.info(
       {
-        extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(global.parseError)(error) },
+        extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(parseError)(error) },
       },
       `${scope}.error`,
     );
