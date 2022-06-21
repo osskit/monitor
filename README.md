@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/15312980/174907158-4633da92-c8dd-4add-bfda-22958a5eab03.png">
+</p>
+
 # monitor
 
 Utilize a declarative API to wrap your functions to capture Prometheus metrics & logs for each function
