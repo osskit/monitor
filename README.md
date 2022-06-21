@@ -1,5 +1,3 @@
-<div align="center">
-
 # monitor
 
 ## Monitor your methods easily with Prometheus
