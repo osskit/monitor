@@ -19,7 +19,8 @@
     "build": "tsc",
     "examples_usage": "ts-node examples/usage.ts",
     "examples_server": "ts-node examples/server.ts",
-    "lint": "eslint src --fix --ext .ts",
+    "lint:base": "eslint . --ext .ts",
+    "lint": "yarn lint:base --fix",
     "format": "prettier --write '**/*.{ts,js,json}'",
     "prepare": "husky install"
   },
@@ -41,7 +42,6 @@
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
     "eslint": "^8.17.0",
-    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-unicorn": "^42.0.0",
     "express": "^4.17.3",
