@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/15312980/174907503-53d9611d-127e-440a-b113-7f5df2f4173d.png">
+  <img width="250" height="250" src="https://user-images.githubusercontent.com/15312980/174908438-b6f5eaea-7b81-4008-9cad-8a7c2a45bbaf.svg">
 </p>
 
 # monitor
@@ -11,7 +11,6 @@ Utilize a declarative API to wrap your functions to capture Prometheus metrics &
 yarn add @osskit/monitor
 ```
 
-## Usage
 ## Scoped
 ```
 import { createMonitor } from '@osskit/monitor'
