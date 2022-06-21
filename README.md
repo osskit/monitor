@@ -1,8 +1,6 @@
 # monitor
 
-## Monitor your methods easily with Prometheus
-
-</div>
+Utilize a declarative API to wrap your functions to capture Prometheus metrics & logs for each function
 
 ## Install
 ```
