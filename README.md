@@ -94,3 +94,6 @@ Type: `string`
   prometheusBuckets?: number[];
   logger?: BaseLogger; // pino's BaseLogger instance
   }`
+  
+  ## License
+  MIT License
