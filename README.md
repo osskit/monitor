@@ -2,9 +2,12 @@
   <img width="250" height="250" src="https://user-images.githubusercontent.com/15312980/174908438-b6f5eaea-7b81-4008-9cad-8a7c2a45bbaf.svg">
 </p>
 
-# monitor
-
-Utilize a declarative API to wrap your functions to capture Prometheus metrics & logs for each function
+<div align="center">
+ 
+  ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/osskit/monitor/bump) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/osskit/monitor/blob/master/LICENSE.md) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+  
+ Utilize a declarative API to wrap your functions to capture Prometheus metrics & logs for each function
+</div>
 
 ## Install
 ```
