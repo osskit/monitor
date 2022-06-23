@@ -1,5 +1,7 @@
-import { createMonitor, default as defaultMonitor, setGlobalContext } from '../src/index.js';
-import { setGlobalOptions } from '../src';
+import { createMonitor, default as defaultMonitor, setGlobalContext, setGlobalOptions } from '../src/index.js';
+import pino from 'pino';
+
+const customLogger = pino({ messageKey: 'key', name: 'customLogger' });
 
 const getHeader = () => ({ header: 'header-value' });
 
@@ -8,6 +10,7 @@ setGlobalOptions({
   logResult: true,
   parseError: (e: any): any => ({ message: e.message, stack: e.stack }),
   prometheusBuckets: [0.03, 0.1, 0.3, 0.7, 1.5, 10],
+  logger: customLogger,
 });
 setGlobalContext(getHeader);
 

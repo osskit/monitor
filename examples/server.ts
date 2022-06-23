@@ -1,7 +1,7 @@
 import express, { Response } from 'express';
 import promBundle from 'express-prom-bundle';
 import { createServer } from 'http';
-import { createMonitor } from '../src';
+import { createMonitor } from '../src/monitor.js';
 
 const monitor = createMonitor({ scope: 'process' });
 
