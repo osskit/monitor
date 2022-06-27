@@ -13,8 +13,8 @@
 ```
 yarn add @osskit/monitor
 ```
-
-## Scoped
+## Usage
+### Scoped
 ```
 import { createMonitor } from '@osskit/monitor'
 
@@ -25,7 +25,7 @@ const result2 = await monitor('update', async () => db.update());
 
 // `metrics.query`, `metrics.update` for logs & metrics
 ```
-## Unscoped
+### Unscoped
 ```
 import monitor from '@osskit/monitor'
 
@@ -33,7 +33,7 @@ const result = await monitor('query', async () => db.query());
 
 // `query` for logs & metrics
 ```
-## Monitor Options
+### With monitor options
 ```
 import { createMonitor } from '@osskit/monitor'
 
@@ -52,7 +52,7 @@ const errored = (id: string) => await monitor('query', async () => db.query(id),
 const executionStart = (id: string) => await monitor('query', async () => db.query(id), { logExecutionStart: true });
 ```
 
-## Global Options
+### With global options
 ```
 import { setGlobalOptions, setGlobalContext } from '@osskit/monitor';
 import  logger from './logger.js';
@@ -82,21 +82,33 @@ Returns an instance of a function that calls `monitor` - `<T>(method: string, ca
 #### method
 Type: `string`
 
+### setGlobalOptions({ options: MonitorGlobalOptions })
+Set a number of options that will be used globally for all monitor invocations
+
+### setGlobalContext(value: () => Record<string, string>)
+Invoke a function that returns a global context to use in all monitor invocation logs
+
+### Parameters
+
 #### MonitorOptions
-`{ context?: Record<string, any>;
-  logResult?: boolean;
-  logExecutionStart?: boolean;
-  parseResult?: (res: any) => any;
-  parseError?: (e: any) => any; 
-  }`
+
+| Parameter | Description
+| :----: | --- |
+| `context?: boolean` | add context that will be logged in all method's logs | 
+| `logResult?: boolean` | log the method's result | 
+| `logExecutionStart?: boolean` | log the start of the method's execution `method.start` |
+| `parseResult?: (e: any) => any` | transform the method's result that will be returned |
+| `parseError?: (e: any) => any` | if the method errored, transform the error that will be thrown |
+
   #### GlobalOptions
-`{ context?: Record<string, any>;
-  logResult?: boolean;
-  logExecutionStart?: boolean;
-  parseError?: (e: any) => any;
-  prometheusBuckets?: number[];
-  logger?: BaseLogger; // pino's BaseLogger instance
-  }`
+  
+| Parameter | Description
+| :----: | --- |
+| `logResult?: boolean` | log the monitored methods results | 
+| `logExecutionStart?: boolean` | log the start of the method's execution `method.start` |
+| `parseError?: (e: any) => any` | if the method errored, transform the error that will be thrown |
+| `prometheusBuckets?: number[]` | use the following prometheus bucket list for monitor metrics across methods |
+| `logger?: BaseLogger` | supply a `pino` `BaseLogger` for monitor to use in logging results |
   
   ## License
   MIT License
