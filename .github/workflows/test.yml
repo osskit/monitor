@@ -1,4 +1,4 @@
-name: lint
+name: test
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: lint-${{ github.head_ref }}
+  group: test-${{ github.head_ref }}
   cancel-in-progress: true
 
 jobs:
@@ -21,4 +21,4 @@ jobs:
         with:
           node-version: "18.x"
       - run: yarn
-      - run: yarn lint:base
+      - run: yarn test

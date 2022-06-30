@@ -8,9 +8,9 @@ import {
 import { createCounter, createHistogram } from './prometheus.js';
 import { getGlobalContext } from './globalContext.js';
 import safe from './safe.js';
-import type { MonitorOptions, InitOptions, Monitor } from './types';
+import type { MonitorOptions, InitOptions, Monitor } from './types.js';
 
-const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
+const innerMonitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
   const metric = monitorScope ?? method;
   const scope = monitorScope ? `${monitorScope}.${method}` : method;
 
@@ -110,6 +110,6 @@ const monitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<
 export const createMonitor =
   ({ scope, ...initOptions }: InitOptions) =>
   <T>(method: string, callable: () => T, options?: MonitorOptions<T>) =>
-    monitor({ scope, method, callable, options: { ...initOptions.options, ...options } });
+    innerMonitor({ scope, method, callable, options: { ...initOptions.options, ...options } });
 
-export default <T>(method: string, callable: () => T, options?: MonitorOptions<T>) => monitor({ method, callable, options });
+export const monitor = <T>(method: string, callable: () => T, options?: MonitorOptions<T>) => innerMonitor({ method, callable, options });
