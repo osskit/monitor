@@ -1,9 +1,7 @@
 {
   "extends": ["@osskit"],
   "ignorePatterns": [
-    "examples/**"
-  ],
-  "rules": {
-    "@typescript-eslint/no-empty-interface": "off"
-  }
+    "examples/**",
+    "dist/**"
+  ]
 }
