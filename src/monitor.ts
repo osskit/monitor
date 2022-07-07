@@ -1,4 +1,5 @@
 import is from '@sindresorhus/is';
+import type { CamelCase } from 'type-fest';
 import {
   logger,
   logResult as globalLogResult,
@@ -10,7 +11,12 @@ import { getGlobalContext } from './globalContext.js';
 import safe from './safe.js';
 import type { MonitorOptions, InitOptions, Monitor } from './types.js';
 
-const innerMonitor = <T>({ scope: monitorScope, method, callable, options }: Monitor<T>) => {
+const innerMonitor = <Callable, Scope extends string, Method extends string>({
+  scope: monitorScope,
+  method,
+  callable,
+  options,
+}: Monitor<Callable, Scope, Method>) => {
   const metric = monitorScope ?? method;
   const scope = monitorScope ? `${monitorScope}.${method}` : method;
 
@@ -94,7 +100,7 @@ const innerMonitor = <T>({ scope: monitorScope, method, callable, options }: Mon
           `${scope}.error`,
         );
         throw error;
-      }) as any as T;
+      }) as any as Callable;
   } catch (error) {
     counter.inc({ method, result: 'error' });
     logger.info(
@@ -108,8 +114,12 @@ const innerMonitor = <T>({ scope: monitorScope, method, callable, options }: Mon
 };
 
 export const createMonitor =
-  ({ scope, ...initOptions }: InitOptions) =>
-  <T>(method: string, callable: () => T, options?: MonitorOptions<T>) =>
+  <Scope extends string>({ scope, ...initOptions }: InitOptions<Scope>) =>
+  <Callable, Method extends string>(method: CamelCase<Method>, callable: () => Callable, options?: MonitorOptions<Callable>) =>
     innerMonitor({ scope, method, callable, options: { ...initOptions.options, ...options } });
 
-export const monitor = <T>(method: string, callable: () => T, options?: MonitorOptions<T>) => innerMonitor({ method, callable, options });
+export const monitor = <Callable, Method extends string>(
+  method: CamelCase<Method>,
+  callable: () => Callable,
+  options?: MonitorOptions<Callable>,
+) => innerMonitor({ method, callable, options });
