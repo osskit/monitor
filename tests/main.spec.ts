@@ -33,10 +33,10 @@ describe('monitor', () => {
     });
 
     it('should accept metric name from var', () => {
-      const scope = 'scope';
+      const scope = 'scope' as string;
       const scoped = createMonitor({ scope });
 
-      const metricName = 'name';
+      const metricName = 'name' as string;
 
       expect(scoped(metricName, () => 5)).toBe(5);
     });
