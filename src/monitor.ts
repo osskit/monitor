@@ -115,11 +115,15 @@ const innerMonitor = <Callable, Scope extends string, Method extends string>({
 
 export const createMonitor =
   <Scope extends string>({ scope, ...initOptions }: InitOptions<Scope>) =>
-  <Callable, Method extends string>(method: CamelCase<Method>, callable: () => Callable, options?: MonitorOptions<Callable>) =>
+  <Callable, Method extends string>(
+    method: CamelCase<Method> extends never ? string : CamelCase<Method>,
+    callable: () => Callable,
+    options?: MonitorOptions<Callable>,
+  ) =>
     innerMonitor({ scope, method, callable, options: { ...initOptions.options, ...options } });
 
 export const monitor = <Callable, Method extends string>(
-  method: CamelCase<Method>,
+  method: CamelCase<Method> extends never ? string : CamelCase<Method>,
   callable: () => Callable,
   options?: MonitorOptions<Callable>,
 ) => innerMonitor({ method, callable, options });
