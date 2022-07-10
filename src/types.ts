@@ -1,5 +1,5 @@
 import type { BaseLogger } from 'pino';
-import type { CamelCase, PromiseValue } from 'type-fest';
+import type { CamelCase } from 'type-fest';
 
 export interface GlobalOptions extends MonitorOptionsBase {
   prometheusBuckets: number[];
@@ -7,7 +7,7 @@ export interface GlobalOptions extends MonitorOptionsBase {
 }
 
 export interface InitOptions<Scope extends string> {
-  scope: CamelCase<Scope>;
+  scope: CamelCase<Scope> extends never ? string : CamelCase<Scope>;
   options?: {
     parseError?: (e: any) => any;
   };
@@ -21,12 +21,12 @@ export interface MonitorOptionsBase {
 }
 
 export interface MonitorOptions<T> extends MonitorOptionsBase {
-  parseResult?: (r: PromiseValue<T>) => any;
+  parseResult?: (r: Awaited<T>) => any;
 }
 
 export interface Monitor<Callable, Scope extends string, Method extends string> {
-  scope?: CamelCase<Scope>;
-  method: CamelCase<Method>;
+  scope?: CamelCase<Scope> extends never ? string : CamelCase<Scope>;
+  method: CamelCase<Method> extends never ? string : CamelCase<Method>;
   callable: () => Callable;
   options?: MonitorOptions<Callable>;
 }

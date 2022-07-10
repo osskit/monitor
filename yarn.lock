@@ -619,10 +619,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@osskit/eslint-config@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@osskit/eslint-config/-/eslint-config-1.0.5.tgz#2167f489f04219fcd627dfe1f70993fc2e8459b6"
-  integrity sha512-ckti292Lz/78YUJ1wtTN9JndNaGpa/d61ilurCi0UCrPJfpDU7Hm5YgYf8HwPGWUnVELvIiY97nW/cUbe9RRAQ==
+"@osskit/eslint-config@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@osskit/eslint-config/-/eslint-config-1.0.7.tgz#9c810fdb2cb2a9f401aabcd55c3d6e53f8c68811"
+  integrity sha512-Yh/cS0ORGtbkLWG4/mXkgvlXhOSi9rZuo+y5DfOtk26iPeOCryzjFTa8zv2odJu8+l+8hCM5VEph/WPIDkZWUw==
 
 "@osskit/prettier-config@^0.0.1":
   version "0.0.1"
@@ -1710,10 +1710,10 @@ eslint-plugin-jest@^26.5.3:
   dependencies:
     "@typescript-eslint/utils" "^5.10.0"
 
-eslint-plugin-unicorn@^43.0.0:
-  version "43.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-unicorn/-/eslint-plugin-unicorn-43.0.0.tgz#c26fdfd146036b3f7951fa0f8c9af2b81bd87096"
-  integrity sha512-Z/6HX8yry+zAjo4jHHTAbe1rfniox7qgmCReGBfTc/CVgotfScaMCc4dtSSTHlJ+7Yix5o6LPXzwwpuGGFricg==
+eslint-plugin-unicorn@^43.0.1:
+  version "43.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-unicorn/-/eslint-plugin-unicorn-43.0.1.tgz#71c79caa95dde626c1cd285540fbccaafc262511"
+  integrity sha512-wYvF6q0RRTKw6gzbKy5bbazWUrBEPIto2S9U6eSF+tsHgtgE+CwQ6Bww1W2Ie9TRED01QkZRN79c5aVMFgrFYw==
   dependencies:
     "@babel/helper-validator-identifier" "^7.18.6"
     ci-info "^3.3.2"
