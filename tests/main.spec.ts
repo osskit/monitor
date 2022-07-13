@@ -81,7 +81,7 @@ describe('monitor', () => {
       expect(scoped('logs', () => 5)).toBe(5);
 
       expect(logger.info).toHaveBeenCalledWith(
-        { extra: { context: {}, executionResult: 'NOT_LOGGED', executionTime: expect.any(Number) } },
+        { extra: { context: {}, executionResult: undefined, executionTime: expect.any(Number) } },
         'scope.logs.success',
       );
     });
@@ -105,7 +105,7 @@ describe('monitor', () => {
       expect(scoped('logs', () => 5, { context: { a: true } })).toBe(5);
 
       expect(logger.info).toHaveBeenCalledWith(
-        { extra: { context: { a: true }, executionResult: 'NOT_LOGGED', executionTime: expect.any(Number) } },
+        { extra: { context: { a: true }, executionResult: undefined, executionTime: expect.any(Number) } },
         'scope.logs.success',
       );
     });
