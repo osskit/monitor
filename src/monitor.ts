@@ -52,7 +52,7 @@ const innerMonitor = <Callable, Scope extends string, Method extends string>({
 
     if (!is.promise(result)) {
       const executionTime = stopTimer();
-
+      const parsedResult = safe(options?.parseResult)(result);
       counter.inc({ method, result: 'success' });
       histogram.observe({ method, result: 'success' }, executionTime);
       logger.info(
@@ -60,7 +60,7 @@ const innerMonitor = <Callable, Scope extends string, Method extends string>({
           extra: {
             context: { ...getGlobalContext?.(), ...options?.context },
             executionTime,
-            executionResult: logResult ? safe(options?.parseResult)(result) : 'NOT_LOGGED',
+            executionResult: logResult ? (is.object(parsedResult) ? parsedResult : { value: parsedResult }) : undefined,
           },
         },
         `${scope}.success`,
@@ -72,15 +72,16 @@ const innerMonitor = <Callable, Scope extends string, Method extends string>({
     return result
       .then(async (promiseResult) => {
         const executionTime = stopTimer();
-
+        const parsedResult = safe(options?.parseResult)(promiseResult);
         counter.inc({ method, result: 'success' });
         histogram.observe({ method, result: 'success' }, executionTime);
+
         logger.info(
           {
             extra: {
               context: { ...getGlobalContext?.(), ...options?.context },
               executionTime,
-              executionResult: logResult ? await safe(options?.parseResult)(promiseResult) : 'NOT_LOGGED',
+              executionResult: logResult ? (is.object(parsedResult) ? parsedResult : { value: parsedResult }) : undefined,
             },
           },
           `${scope}.success`,
