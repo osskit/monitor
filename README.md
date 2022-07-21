@@ -76,11 +76,15 @@ Type: `string`
 
 The scope of the monitor's metrics
 
+Will be used as the Prometheus metric name
+
 Returns an instance of a function that calls `monitor` - `<T>(method: string, callable: () => T, options?: MonitorOptions<T>)`
 
 ### monitor(method: string, callable: () => T, options?: MonitorOptions)
 #### method
 Type: `string`
+
+Will be used for the `method` label of the metric, or the metric name if no parent scope was declared
 
 ### setGlobalOptions({ options: MonitorGlobalOptions })
 Set a number of options that will be used globally for all monitor invocations
