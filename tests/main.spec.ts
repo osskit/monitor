@@ -52,7 +52,7 @@ describe('monitor', () => {
 
       expect(scoped('metrics', () => 5)).toBe(5);
 
-      const metrics = await register.getMetricsAsArray();
+      const metrics = register.getMetricsAsArray();
 
       expect(metrics).toHaveLength(4);
       expect(metrics[0]).toMatchObject({ name: 'name_count' });
