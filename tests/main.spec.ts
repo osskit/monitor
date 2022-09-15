@@ -50,7 +50,7 @@ describe('monitor', () => {
     it('should create metrics', async () => {
       const scoped = createMonitor({ scope: 'scope' });
 
-      expect(scoped('metrics', () => 5)).toBe(5);
+      expect(scoped('name', () => 5)).toBe(5);
 
       const metrics = register.getMetricsAsArray();
 
@@ -59,7 +59,24 @@ describe('monitor', () => {
       expect(metrics[1]).toMatchObject({ name: 'name_execution_time' });
       expect(metrics[2]).toMatchObject({ name: 'scope_count' });
       expect(metrics[3]).toMatchObject({ name: 'scope_execution_time' });
-      expect(metrics[2]).toHaveProperty('hashMap.method:metrics,result:success.value', 1);
+      expect(metrics[2]).toHaveProperty('hashMap.method:name,result:success.value', 1);
+    });
+
+    it('should sanitize metric names', async () => {
+      const scoped = createMonitor({ scope: 'outer-scope' });
+
+      expect(scoped('metric-name', () => 5)).toBe(5);
+
+      const metrics = register.getMetricsAsArray();
+
+      expect(metrics).toHaveLength(6);
+      expect(metrics[0]).toMatchObject({ name: 'name_count' });
+      expect(metrics[1]).toMatchObject({ name: 'name_execution_time' });
+      expect(metrics[2]).toMatchObject({ name: 'scope_count' });
+      expect(metrics[3]).toMatchObject({ name: 'scope_execution_time' });
+      expect(metrics[4]).toMatchObject({ name: 'outer_scope_count' });
+      expect(metrics[5]).toMatchObject({ name: 'outer_scope_execution_time' });
+      expect(metrics[4]).toHaveProperty('hashMap.method:metric_name,result:success.value', 1);
     });
 
     it('should write logs', () => {

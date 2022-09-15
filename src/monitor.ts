@@ -1,5 +1,4 @@
 import is from '@sindresorhus/is';
-import type { CamelCase } from 'type-fest';
 import {
   logger,
   logResult as globalLogResult,
@@ -11,14 +10,11 @@ import { getGlobalContext } from './globalContext.js';
 import safe from './safe.js';
 import type { MonitorOptions, InitOptions, Monitor } from './types.js';
 
-const innerMonitor = <Callable, Scope extends string, Method extends string>({
-  scope: monitorScope,
-  method,
-  callable,
-  options,
-}: Monitor<Callable, Scope, Method>) => {
-  const metric = monitorScope ?? method;
-  const scope = monitorScope ? `${monitorScope}.${method}` : method;
+const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, callable, options }: Monitor<Callable>) => {
+  const method = monitorMethod.replaceAll('-', '_');
+  const sanitizedScope = monitorScope?.replaceAll('-', '_');
+  const metric = sanitizedScope ?? method;
+  const scope = sanitizedScope ? `${sanitizedScope}.${method}` : method;
 
   const counter = createCounter({
     name: `${metric}_count`,
@@ -115,16 +111,9 @@ const innerMonitor = <Callable, Scope extends string, Method extends string>({
 };
 
 export const createMonitor =
-  <Scope extends string>({ scope, ...initOptions }: InitOptions<Scope>) =>
-  <Callable, Method extends string>(
-    method: CamelCase<Method> extends never ? string : CamelCase<Method>,
-    callable: () => Callable,
-    options?: MonitorOptions<Callable>,
-  ) =>
+  ({ scope, ...initOptions }: InitOptions) =>
+  <Callable>(method: string, callable: () => Callable, options?: MonitorOptions<Callable>) =>
     innerMonitor({ scope, method, callable, options: { ...initOptions.options, ...options } });
 
-export const monitor = <Callable, Method extends string>(
-  method: CamelCase<Method> extends never ? string : CamelCase<Method>,
-  callable: () => Callable,
-  options?: MonitorOptions<Callable>,
-) => innerMonitor({ method, callable, options });
+export const monitor = <Callable>(method: string, callable: () => Callable, options?: MonitorOptions<Callable>) =>
+  innerMonitor({ method, callable, options });
