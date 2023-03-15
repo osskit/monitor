@@ -127,6 +127,32 @@ describe('monitor', () => {
       );
     });
 
+    it('should write error log at error level', () => {
+      const logger: BaseLogger = {
+        level: 'info',
+        info: jest.fn(),
+        debug: jest.fn(),
+        error: jest.fn(),
+        fatal: jest.fn(),
+        silent: jest.fn(),
+        trace: jest.fn(),
+        warn: jest.fn(),
+      };
+
+      setGlobalOptions({ logger, parseError: (error) => error.message });
+
+      const scoped = createMonitor({ scope: 'scope' });
+
+      try {
+        scoped('logs', () => {
+          throw new Error('some error');
+        });
+        // eslint-disable-next-line no-empty
+      } catch {}
+
+      expect(logger.error).toHaveBeenCalledWith({ extra: { context: {}, error: expect.any(String) } }, 'scope.logs.error');
+    });
+
     it('should write error log at trace level', () => {
       const logger: BaseLogger = {
         level: 'info',
