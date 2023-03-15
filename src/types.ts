@@ -1,4 +1,4 @@
-import type { BaseLogger } from 'pino';
+import type { BaseLogger, Level } from 'pino';
 
 export interface GlobalOptions extends MonitorOptionsBase {
   prometheusBuckets: number[];
@@ -17,6 +17,7 @@ export interface MonitorOptionsBase {
   logResult?: boolean;
   logExecutionStart?: boolean;
   parseError?: (e: any) => any;
+  errorLogLevel?: Level;
 }
 
 export interface MonitorOptions<T> extends MonitorOptionsBase {

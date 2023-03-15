@@ -4,6 +4,7 @@ import {
   logResult as globalLogResult,
   logExecutionStart as globalLogExecutionStart,
   parseError as globalParseError,
+  errorLogLevel as globalErrorLogLevel,
 } from './globalOptions.js';
 import { createCounter, createHistogram } from './prometheus.js';
 import { getGlobalContext } from './globalContext.js';
@@ -32,6 +33,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
   const logExecutionStart = options?.logExecutionStart ?? globalLogExecutionStart;
   const logResult = options?.logResult ?? globalLogResult;
   const parseError = options?.parseError ?? globalParseError;
+  const errorLogLevel = options?.errorLogLevel ?? globalErrorLogLevel;
 
   try {
     if (logExecutionStart) {
@@ -87,7 +89,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
       })
       .catch(async (error: Error) => {
         counter.inc({ method, result: 'error' });
-        logger.info(
+        logger[errorLogLevel](
           {
             extra: {
               context: { ...getGlobalContext?.(), ...options?.context },
@@ -100,7 +102,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
       }) as any as Callable;
   } catch (error) {
     counter.inc({ method, result: 'error' });
-    logger.info(
+    logger[errorLogLevel](
       {
         extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(parseError)(error) },
       },

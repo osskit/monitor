@@ -126,5 +126,55 @@ describe('monitor', () => {
         'scope.logs.success',
       );
     });
+
+    it('should write error log at error level', () => {
+      const logger: BaseLogger = {
+        level: 'info',
+        info: jest.fn(),
+        debug: jest.fn(),
+        error: jest.fn(),
+        fatal: jest.fn(),
+        silent: jest.fn(),
+        trace: jest.fn(),
+        warn: jest.fn(),
+      };
+
+      setGlobalOptions({ logger, parseError: (error) => error.message });
+
+      const scoped = createMonitor({ scope: 'scope' });
+
+      expect(() =>
+        scoped('logs', () => {
+          throw new Error('some error');
+        }),
+      ).toThrow();
+
+      expect(logger.error).toHaveBeenCalledWith({ extra: { context: {}, error: expect.any(String) } }, 'scope.logs.error');
+    });
+
+    it('should write error log at trace level', () => {
+      const logger: BaseLogger = {
+        level: 'info',
+        info: jest.fn(),
+        debug: jest.fn(),
+        error: jest.fn(),
+        fatal: jest.fn(),
+        silent: jest.fn(),
+        trace: jest.fn(),
+        warn: jest.fn(),
+      };
+
+      setGlobalOptions({ logger, errorLogLevel: 'trace', parseError: (error) => error.message });
+
+      const scoped = createMonitor({ scope: 'scope' });
+
+      expect(() =>
+        scoped('logs', () => {
+          throw new Error('some error');
+        }),
+      ).toThrow();
+
+      expect(logger.trace).toHaveBeenCalledWith({ extra: { context: {}, error: expect.any(String) } }, 'scope.logs.error');
+    });
   });
 });

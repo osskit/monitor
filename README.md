@@ -64,6 +64,7 @@ setGlobalOptions({
   parseError: (res) => console.log(res),
   prometheusBuckets: [0.0001, 0.1, 0.5, 10],
   logger,
+  errorLogLevel: 'fatal'
 });
 
 setGlobalContext(() => getDynamicContext());
@@ -96,23 +97,26 @@ Invoke a function that returns a global context to use in all monitor invocation
 
 #### MonitorOptions
 
-|            Parameter            | Description                                                    |
-|:-------------------------------:|----------------------------------------------------------------|
-|       `context?: boolean`       | add context that will be logged in all method's logs           | 
-|      `logResult?: boolean`      | log the method's result                                        | 
-|  `logExecutionStart?: boolean`  | log the start of the method's execution `method.start`         |
-| `parseResult?: (e: any) => any` | transform the method's result that will be returned            |
-| `parseError?: (e: any) => any`  | if the method errored, transform the error that will be thrown |
+|            Parameter            | Description                                                                 |
+|:-------------------------------:|-----------------------------------------------------------------------------|
+|       `context?: boolean`       | add context that will be logged in all method's logs                        | 
+|      `logResult?: boolean`      | log the method's result                                                     | 
+|  `logExecutionStart?: boolean`  | log the start of the method's execution `method.start`                      |
+| `parseResult?: (e: any) => any` | transform the method's result that will be returned                         |
+| `parseError?: (e: any) => any`  | if the method errored, transform the error that will be thrown              |
+| `errorLogLevel?: pino.Level`    | if the method errored, which level should the message be, default - `error` |
+
 
 #### GlobalOptions
   
-|           Parameter            | Description                                                                 |
-|:------------------------------:|-----------------------------------------------------------------------------|
-|     `logResult?: boolean`      | log the monitored methods results                                           | 
-| `logExecutionStart?: boolean`  | log the start of the method's execution `method.start`                      |
-| `parseError?: (e: any) => any` | if the method errored, transform the error that will be thrown              |
-| `prometheusBuckets?: number[]` | use the following prometheus bucket list for monitor metrics across methods |
-|     `logger?: BaseLogger`      | supply a `pino` `BaseLogger` for monitor to use in logging results          |
-  
+|           Parameter            | Description                                                                  |
+|:------------------------------:|------------------------------------------------------------------------------|
+|     `logResult?: boolean`      | log the monitored methods results                                            | 
+| `logExecutionStart?: boolean`  | log the start of the method's execution `method.start`                       |
+| `parseError?: (e: any) => any` | if the method errored, transform the error that will be thrown               |
+| `prometheusBuckets?: number[]` | use the following prometheus bucket list for monitor metrics across methods  |
+|     `logger?: BaseLogger`      | supply a `pino` `BaseLogger` for monitor to use in logging results           |
+| `errorLogLevel?: pino.Level`    | if the method errored, which level should the message be, default - `error` |
+
 ## License
 [MIT License](LICENSE)
