@@ -143,12 +143,11 @@ describe('monitor', () => {
 
       const scoped = createMonitor({ scope: 'scope' });
 
-      try {
+      expect(() =>
         scoped('logs', () => {
           throw new Error('some error');
-        });
-        // eslint-disable-next-line no-empty
-      } catch {}
+        }),
+      ).toThrow();
 
       expect(logger.error).toHaveBeenCalledWith({ extra: { context: {}, error: expect.any(String) } }, 'scope.logs.error');
     });
@@ -169,12 +168,11 @@ describe('monitor', () => {
 
       const scoped = createMonitor({ scope: 'scope' });
 
-      try {
+      expect(() =>
         scoped('logs', () => {
           throw new Error('some error');
-        });
-        // eslint-disable-next-line no-empty
-      } catch {}
+        }),
+      ).toThrow();
 
       expect(logger.trace).toHaveBeenCalledWith({ extra: { context: {}, error: expect.any(String) } }, 'scope.logs.error');
     });
