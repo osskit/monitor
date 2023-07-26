@@ -184,7 +184,7 @@ describe('monitor', () => {
       expect(
         scoped('custom', () => 5, {
           context: { myId: '5' },
-          labeling: [{ name: 'my_entity_id', contextKeyPath: 'myId' }],
+          labeling: [{ name: 'my_entity_id', path: 'myId' }],
         }),
       ).toBe(5);
 

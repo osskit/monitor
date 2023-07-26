@@ -52,7 +52,7 @@ const errored = (id: string) => await monitor('query', async () => db.query(id),
 const executionStart = (id: string) => await monitor('query', async () => db.query(id), { logExecutionStart: true });
 
 // Custom labeling
-const customLabels = (id: string) => await monitor('query', async () => db.query(id), { labeling: [{ name: 'labelName', contextKeyPath: 'key.path.id' }] });
+const customLabels = (id: string) => await monitor('query', async () => db.query(id), {context: {key: {path: {id: 'myId'}} }, labeling: [{ name: 'labelName', path: 'key.path.id' }] });
 ```
 
 ### With global options
@@ -108,7 +108,7 @@ Invoke a function that returns a global context to use in all monitor invocation
 |            `parseResult?: (e: any) => any`            | transform the method's result that will be returned                         |
 |            `parseError?: (e: any) => any`             | if the method errored, transform the error that will be thrown              |
 |             `errorLogLevel?: pino.Level`              | if the method errored, which level should the message be, default - `error` |
-  | `labeling?: {name: string, contextKeyPath: string}[]` | add custom labeled counters using context keys and values 
+| `labeling?: {name: string, contextKeyPath: string}[]` | add custom labeled counters using context keys and values                   |
 
 #### GlobalOptions
   

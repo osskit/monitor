@@ -23,7 +23,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
   const parseError = options?.parseError ?? globalParseError;
   const errorLogLevel = options?.errorLogLevel ?? globalErrorLogLevel;
   const labeling = options?.labeling ?? [];
-  const labelValues = Object.fromEntries(labeling.map(({ name, contextKeyPath }) => [name, get(options?.context, contextKeyPath)]));
+  const labelValues = Object.fromEntries(labeling.map(({ name, path }) => [name, get(options?.context, path)]));
 
   const counter = createCounter({
     name: `${metric}_count`,
@@ -54,8 +54,8 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
     if (!is.promise(result)) {
       const executionTime = stopTimer();
       const parsedResult = safe(options?.parseResult)(result);
-      counter.inc({ method, result: 'success', ...labelValues });
-      histogram.observe({ method, result: 'success', ...labelValues }, executionTime);
+      counter.inc({ ...labelValues, method, result: 'success' });
+      histogram.observe({ ...labelValues, method, result: 'success' }, executionTime);
       logger.info(
         {
           extra: {
@@ -74,8 +74,8 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
       .then(async (promiseResult) => {
         const executionTime = stopTimer();
         const parsedResult = safe(options?.parseResult)(promiseResult);
-        counter.inc({ method, result: 'success', ...labelValues });
-        histogram.observe({ method, result: 'success', ...labelValues }, executionTime);
+        counter.inc({ ...labelValues, method, result: 'success' });
+        histogram.observe({ ...labelValues, method, result: 'success' }, executionTime);
 
         logger.info(
           {
@@ -91,7 +91,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
         return promiseResult;
       })
       .catch(async (error: Error) => {
-        counter.inc({ method, result: 'error', ...labelValues });
+        counter.inc({ ...labelValues, method, result: 'error' });
         logger[errorLogLevel](
           {
             extra: {
@@ -104,7 +104,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
         throw error;
       }) as any as Callable;
   } catch (error) {
-    counter.inc({ method, result: 'error', ...labelValues });
+    counter.inc({ ...labelValues, method, result: 'error' });
     logger[errorLogLevel](
       {
         extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(parseError)(error) },
