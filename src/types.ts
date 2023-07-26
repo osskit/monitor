@@ -22,6 +22,14 @@ export interface MonitorOptionsBase {
 
 export interface MonitorOptions<T> extends MonitorOptionsBase {
   parseResult?: (r: Awaited<T>) => any;
+  labeling?: ContextLabeling[];
+}
+
+export interface ContextLabeling {
+  name: string;
+  help?: string;
+  labelNames?: string[];
+  contextKeys?: string[];
 }
 
 export interface Monitor<Callable> {

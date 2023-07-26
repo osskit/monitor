@@ -62,6 +62,35 @@ describe('monitor', () => {
       expect(metrics[2]).toHaveProperty('hashMap.method:name,result:success.value', 1);
     });
 
+    it('should create custom labels metrics', async () => {
+      const scoped = createMonitor({ scope: 'scope' });
+
+      expect(
+        scoped('name', () => 5, {
+          context: { myId: '5' },
+          labeling: [{ labelNames: ['entityId'], name: 'my_entity_id', help: 'per entity', contextKeys: ['myId'] }],
+        }),
+      ).toBe(5);
+
+      const metrics = register.getMetricsAsArray();
+
+      for (const metric of metrics) {
+        console.log(metric);
+      }
+
+      expect(metrics).toHaveLength(5);
+      expect(metrics[0]).toMatchObject({ name: 'name_count' });
+      expect(metrics[1]).toMatchObject({ name: 'name_execution_time' });
+      expect(metrics[2]).toMatchObject({ name: 'scope_count' });
+      expect(metrics[3]).toMatchObject({ name: 'scope_execution_time' });
+      expect(metrics[4]).toMatchObject({ name: 'scope_my_entity_id_count' });
+      expect(metrics[2]).toHaveProperty('hashMap.method:name,result:success.value', 1);
+      expect(metrics[4]).toHaveProperty('hashMap.entityId:5,method:name,result:success', {
+        value: 1,
+        labels: { entityId: '5', method: 'name', result: 'success' },
+      });
+    });
+
     it('should sanitize metric names', async () => {
       const scoped = createMonitor({ scope: 'outer-scope' });
 
