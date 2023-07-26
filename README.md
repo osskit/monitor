@@ -100,15 +100,15 @@ Invoke a function that returns a global context to use in all monitor invocation
 
 #### MonitorOptions
 
-|            Parameter            | Description                                                                 |
-|:-------------------------------:|-----------------------------------------------------------------------------|
-|       `context?: boolean`       | add context that will be logged in all method's logs                        | 
-|      `logResult?: boolean`      | log the method's result                                                     | 
-|  `logExecutionStart?: boolean`  | log the start of the method's execution `method.start`                      |
-| `parseResult?: (e: any) => any` | transform the method's result that will be returned                         |
-| `parseError?: (e: any) => any`  | if the method errored, transform the error that will be thrown              |
-| `errorLogLevel?: pino.Level`    | if the method errored, which level should the message be, default - `error` |
-  | `labeling?: ContextLabeling[]` | add custom labeled counters using context keys and values 
+|                       Parameter                       | Description                                                                 |
+|:-----------------------------------------------------:|-----------------------------------------------------------------------------|
+|                  `context?: boolean`                  | add context that will be logged in all method's logs                        | 
+|                 `logResult?: boolean`                 | log the method's result                                                     | 
+|             `logExecutionStart?: boolean`             | log the start of the method's execution `method.start`                      |
+|            `parseResult?: (e: any) => any`            | transform the method's result that will be returned                         |
+|            `parseError?: (e: any) => any`             | if the method errored, transform the error that will be thrown              |
+|             `errorLogLevel?: pino.Level`              | if the method errored, which level should the message be, default - `error` |
+  | `labeling?: {name: string, contextKeyPath: string}[]` | add custom labeled counters using context keys and values 
 
 #### GlobalOptions
   

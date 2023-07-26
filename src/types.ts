@@ -27,9 +27,7 @@ export interface MonitorOptions<T> extends MonitorOptionsBase {
 
 export interface ContextLabeling {
   name: string;
-  help?: string;
-  labelNames?: string[];
-  contextKeys?: string[];
+  contextKeyPath: string;
 }
 
 export interface Monitor<Callable> {

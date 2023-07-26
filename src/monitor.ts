@@ -1,4 +1,5 @@
 import is from '@sindresorhus/is';
+import { get } from 'lodash-es';
 import {
   logger,
   logResult as globalLogResult,
@@ -22,41 +23,18 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
   const parseError = options?.parseError ?? globalParseError;
   const errorLogLevel = options?.errorLogLevel ?? globalErrorLogLevel;
   const labeling = options?.labeling ?? [];
+  const labelValues = Object.fromEntries(labeling.map(({ name, contextKeyPath }) => [name, get(options?.context, contextKeyPath)]));
 
   const counter = createCounter({
     name: `${metric}_count`,
     help: `${metric}_count`,
-    labelNames: ['method', 'result'],
+    labelNames: ['method', 'result', ...labeling.map(({ name }) => name)],
   });
   const histogram = createHistogram({
     name: `${metric}_execution_time`,
     help: `${metric}_execution_time`,
-    labelNames: ['method', 'result'],
+    labelNames: ['method', 'result', ...labeling.map(({ name }) => name)],
   });
-
-  const labelCounters = labeling
-    .filter(({ labelNames }) => !!labelNames?.length)
-    .map(({ name, help, labelNames, contextKeys }) => {
-      const sanitizedName = name.replaceAll('-', '_').replaceAll(' ', '_');
-      const labelCounter = createCounter({
-        name: `${metric}_${sanitizedName}_count`,
-        help: help ?? `${metric} ${sanitizedName} count`,
-        labelNames: ['method', 'result', ...(labelNames ?? [])],
-      });
-
-      return (result: string) => {
-        const contextValues =
-          contextKeys?.map((key) => options?.context?.[key]).filter((value): value is string => typeof value === 'string') ?? [];
-
-        labelCounter.labels(method, result, ...contextValues).inc();
-      };
-    });
-
-  const increaseLabelCounters = (result: string) => {
-    labelCounters.forEach((labelCounter) => {
-      labelCounter(result);
-    });
-  };
 
   const stopTimer = histogram.startTimer();
 
@@ -76,9 +54,8 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
     if (!is.promise(result)) {
       const executionTime = stopTimer();
       const parsedResult = safe(options?.parseResult)(result);
-      counter.inc({ method, result: 'success' });
-      increaseLabelCounters('success');
-      histogram.observe({ method, result: 'success' }, executionTime);
+      counter.inc({ method, result: 'success', ...labelValues });
+      histogram.observe({ method, result: 'success', ...labelValues }, executionTime);
       logger.info(
         {
           extra: {
@@ -97,9 +74,8 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
       .then(async (promiseResult) => {
         const executionTime = stopTimer();
         const parsedResult = safe(options?.parseResult)(promiseResult);
-        counter.inc({ method, result: 'success' });
-        increaseLabelCounters('success');
-        histogram.observe({ method, result: 'success' }, executionTime);
+        counter.inc({ method, result: 'success', ...labelValues });
+        histogram.observe({ method, result: 'success', ...labelValues }, executionTime);
 
         logger.info(
           {
@@ -115,9 +91,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
         return promiseResult;
       })
       .catch(async (error: Error) => {
-        counter.inc({ method, result: 'error' });
-        increaseLabelCounters('error');
-
+        counter.inc({ method, result: 'error', ...labelValues });
         logger[errorLogLevel](
           {
             extra: {
@@ -130,9 +104,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
         throw error;
       }) as any as Callable;
   } catch (error) {
-    counter.inc({ method, result: 'error' });
-    increaseLabelCounters('error');
-
+    counter.inc({ method, result: 'error', ...labelValues });
     logger[errorLogLevel](
       {
         extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(parseError)(error) },
