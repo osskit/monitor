@@ -52,7 +52,7 @@ const errored = (id: string) => await monitor('query', async () => db.query(id),
 const executionStart = (id: string) => await monitor('query', async () => db.query(id), { logExecutionStart: true });
 
 // Custom labeling
-const customLabels = (id: string) => await monitor('query', async () => db.query(id), { labeling: [{ name: 'id', help: 'my id', labelNames: ['entityId'], contextKeys: ['entityId'] }] });
+const customLabels = (id: string) => await monitor('query', async () => db.query(id), { labeling: [{ name: 'labelName', contextKeyPath: 'key.path.id' }] });
 ```
 
 ### With global options
