@@ -52,7 +52,7 @@ const errored = (id: string) => await monitor('query', async () => db.query(id),
 const executionStart = (id: string) => await monitor('query', async () => db.query(id), { logExecutionStart: true });
 
 // Custom labeling
-const customLabels = (id: string) => await monitor('query', async () => db.query(id), {context: {key: 'myId' }, labeling: [{ name: 'labelName', value: 'myId' }] });
+const customLabels = (id: string) => await monitor('query', async () => db.query(id), {context: {key: 'myId' }, labeling: { 'labelName': 'myId' } });
 ```
 
 ### With global options
@@ -100,15 +100,15 @@ Invoke a function that returns a global context to use in all monitor invocation
 
 #### MonitorOptions
 
-|                  Parameter                   | Description                                                                 |
-|:--------------------------------------------:|-----------------------------------------------------------------------------|
-|             `context?: boolean`              | add context that will be logged in all method's logs                        | 
-|            `logResult?: boolean`             | log the method's result                                                     | 
-|        `logExecutionStart?: boolean`         | log the start of the method's execution `method.start`                      |
-|       `parseResult?: (e: any) => any`        | transform the method's result that will be returned                         |
-|        `parseError?: (e: any) => any`        | if the method errored, transform the error that will be thrown              |
-|         `errorLogLevel?: pino.Level`         | if the method errored, which level should the message be, default - `error` |
-| `labeling?: {name: string, value: string}[]` | add custom labeled counters using keys and values                           |  
+|              Parameter              | Description                                                                 |
+|:-----------------------------------:|-----------------------------------------------------------------------------|
+|         `context?: boolean`         | add context that will be logged in all method's logs                        | 
+|        `logResult?: boolean`        | log the method's result                                                     | 
+|    `logExecutionStart?: boolean`    | log the start of the method's execution `method.start`                      |
+|   `parseResult?: (e: any) => any`   | transform the method's result that will be returned                         |
+|   `parseError?: (e: any) => any`    | if the method errored, transform the error that will be thrown              |
+|    `errorLogLevel?: pino.Level`     | if the method errored, which level should the message be, default - `error` |
+| `labeling?: Record<string, string>` | add custom labeled counters using keys and values                           |  
 
 #### GlobalOptions
   

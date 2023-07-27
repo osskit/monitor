@@ -184,7 +184,8 @@ describe('monitor', () => {
       expect(
         scoped('custom', () => 5, {
           context: { myId: '5' },
-          labeling: [{ name: 'my_entity_id', value: '5' }],
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          labeling: { my_entity_id: '5' },
         }),
       ).toBe(5);
 
