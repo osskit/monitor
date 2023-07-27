@@ -177,4 +177,28 @@ describe('monitor', () => {
       expect(logger.trace).toHaveBeenCalledWith({ extra: { context: {}, error: expect.any(String) } }, 'scope.logs.error');
     });
   });
+  describe('custom metrics', () => {
+    it('should create custom labels metrics', async () => {
+      const scoped = createMonitor({ scope: 'customScope' });
+
+      expect(
+        scoped('custom', () => 5, {
+          context: { myId: '5' },
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          labeling: { my_entity_id: '5' },
+        }),
+      ).toBe(5);
+
+      const metrics = register.getMetricsAsArray();
+
+      expect(metrics).toHaveLength(8);
+      expect(metrics[6]).toMatchObject({ name: 'customScope_count' });
+      expect(metrics[7]).toMatchObject({ name: 'customScope_execution_time' });
+      expect(metrics[6]).toHaveProperty('hashMap.method:custom,my_entity_id:5,result:success', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        labels: { method: 'custom', my_entity_id: '5', result: 'success' },
+        value: 1,
+      });
+    });
+  });
 });

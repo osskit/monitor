@@ -17,23 +17,25 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
   const metric = sanitizedScope ?? method;
   const scope = sanitizedScope ? `${sanitizedScope}.${method}` : method;
 
-  const counter = createCounter({
-    name: `${metric}_count`,
-    help: `${metric}_count`,
-    labelNames: ['method', 'result'],
-  });
-  const histogram = createHistogram({
-    name: `${metric}_execution_time`,
-    help: `${metric}_execution_time`,
-    labelNames: ['method', 'result'],
-  });
-
-  const stopTimer = histogram.startTimer();
-
   const logExecutionStart = options?.logExecutionStart ?? globalLogExecutionStart;
   const logResult = options?.logResult ?? globalLogResult;
   const parseError = options?.parseError ?? globalParseError;
   const errorLogLevel = options?.errorLogLevel ?? globalErrorLogLevel;
+  const labeling = options?.labeling ?? {};
+  const labelingKeys = Object.keys(labeling);
+
+  const counter = createCounter({
+    name: `${metric}_count`,
+    help: `${metric}_count`,
+    labelNames: ['method', 'result', ...labelingKeys],
+  });
+  const histogram = createHistogram({
+    name: `${metric}_execution_time`,
+    help: `${metric}_execution_time`,
+    labelNames: ['method', 'result', ...labelingKeys],
+  });
+
+  const stopTimer = histogram.startTimer();
 
   try {
     if (logExecutionStart) {
@@ -51,8 +53,8 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
     if (!is.promise(result)) {
       const executionTime = stopTimer();
       const parsedResult = safe(options?.parseResult)(result);
-      counter.inc({ method, result: 'success' });
-      histogram.observe({ method, result: 'success' }, executionTime);
+      counter.inc({ ...labeling, method, result: 'success' });
+      histogram.observe({ ...labeling, method, result: 'success' }, executionTime);
       logger.info(
         {
           extra: {
@@ -71,8 +73,8 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
       .then(async (promiseResult) => {
         const executionTime = stopTimer();
         const parsedResult = safe(options?.parseResult)(promiseResult);
-        counter.inc({ method, result: 'success' });
-        histogram.observe({ method, result: 'success' }, executionTime);
+        counter.inc({ ...labeling, method, result: 'success' });
+        histogram.observe({ ...labeling, method, result: 'success' }, executionTime);
 
         logger.info(
           {
@@ -88,7 +90,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
         return promiseResult;
       })
       .catch(async (error: Error) => {
-        counter.inc({ method, result: 'error' });
+        counter.inc({ ...labeling, method, result: 'error' });
         logger[errorLogLevel](
           {
             extra: {
@@ -101,7 +103,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
         throw error;
       }) as any as Callable;
   } catch (error) {
-    counter.inc({ method, result: 'error' });
+    counter.inc({ ...labeling, method, result: 'error' });
     logger[errorLogLevel](
       {
         extra: { context: { ...getGlobalContext?.(), ...options?.context }, error: safe(parseError)(error) },
