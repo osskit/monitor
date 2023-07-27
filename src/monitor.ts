@@ -1,5 +1,4 @@
 import is from '@sindresorhus/is';
-import { get } from 'lodash-es';
 import {
   logger,
   logResult as globalLogResult,
@@ -23,7 +22,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
   const parseError = options?.parseError ?? globalParseError;
   const errorLogLevel = options?.errorLogLevel ?? globalErrorLogLevel;
   const labeling = options?.labeling ?? [];
-  const labelValues = Object.fromEntries(labeling.map(({ name, path }) => [name, get(options?.context, path)]));
+  const labelValues = Object.fromEntries(labeling.map(({ name, value }) => [name, value]));
 
   const counter = createCounter({
     name: `${metric}_count`,
