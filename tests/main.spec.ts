@@ -17,7 +17,21 @@ describe('monitor', () => {
 
   describe('unscoped', () => {
     it('should return an inner value', () => {
-      expect(monitor('name', () => 5)).toBe(5);
+      expect(monitor('first', () => 5)).toBe(5);
+    });
+    it('should create custom labels metrics', async () => {
+      expect(monitor('name', () => 5, { labeling: { id: '5' } })).toBe(5);
+
+      const metrics = register.getMetricsAsArray();
+
+      expect(metrics).toHaveLength(4);
+      expect(metrics[2]).toMatchObject({ name: 'name_count' });
+      expect(metrics[3]).toMatchObject({ name: 'name_execution_time' });
+      expect(metrics[2]).toHaveProperty('hashMap.id:5,method:name,result:success', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        labels: { method: 'name', id: '5', result: 'success' },
+        value: 1,
+      });
     });
   });
 
@@ -54,12 +68,14 @@ describe('monitor', () => {
 
       const metrics = register.getMetricsAsArray();
 
-      expect(metrics).toHaveLength(4);
-      expect(metrics[0]).toMatchObject({ name: 'name_count' });
-      expect(metrics[1]).toMatchObject({ name: 'name_execution_time' });
-      expect(metrics[2]).toMatchObject({ name: 'scope_count' });
-      expect(metrics[3]).toMatchObject({ name: 'scope_execution_time' });
-      expect(metrics[2]).toHaveProperty('hashMap.method:name,result:success.value', 1);
+      expect(metrics).toHaveLength(6);
+      expect(metrics[0]).toMatchObject({ name: 'first_count' });
+      expect(metrics[1]).toMatchObject({ name: 'first_execution_time' });
+      expect(metrics[2]).toMatchObject({ name: 'name_count' });
+      expect(metrics[3]).toMatchObject({ name: 'name_execution_time' });
+      expect(metrics[4]).toMatchObject({ name: 'scope_count' });
+      expect(metrics[5]).toMatchObject({ name: 'scope_execution_time' });
+      expect(metrics[4]).toHaveProperty('hashMap.method:name,result:success.value', 1);
     });
 
     it('should sanitize metric names', async () => {
@@ -69,14 +85,16 @@ describe('monitor', () => {
 
       const metrics = register.getMetricsAsArray();
 
-      expect(metrics).toHaveLength(6);
-      expect(metrics[0]).toMatchObject({ name: 'name_count' });
-      expect(metrics[1]).toMatchObject({ name: 'name_execution_time' });
-      expect(metrics[2]).toMatchObject({ name: 'scope_count' });
-      expect(metrics[3]).toMatchObject({ name: 'scope_execution_time' });
-      expect(metrics[4]).toMatchObject({ name: 'outer_scope_count' });
-      expect(metrics[5]).toMatchObject({ name: 'outer_scope_execution_time' });
-      expect(metrics[4]).toHaveProperty('hashMap.method:metric_name,result:success.value', 1);
+      expect(metrics).toHaveLength(8);
+      expect(metrics[0]).toMatchObject({ name: 'first_count' });
+      expect(metrics[1]).toMatchObject({ name: 'first_execution_time' });
+      expect(metrics[2]).toMatchObject({ name: 'name_count' });
+      expect(metrics[3]).toMatchObject({ name: 'name_execution_time' });
+      expect(metrics[4]).toMatchObject({ name: 'scope_count' });
+      expect(metrics[5]).toMatchObject({ name: 'scope_execution_time' });
+      expect(metrics[6]).toMatchObject({ name: 'outer_scope_count' });
+      expect(metrics[7]).toMatchObject({ name: 'outer_scope_execution_time' });
+      expect(metrics[6]).toHaveProperty('hashMap.method:metric_name,result:success.value', 1);
     });
 
     it('should write logs', () => {
@@ -176,10 +194,9 @@ describe('monitor', () => {
 
       expect(logger.trace).toHaveBeenCalledWith({ extra: { context: {}, error: expect.any(String) } }, 'scope.logs.error');
     });
-  });
-  describe('custom metrics', () => {
+
     it('should create custom labels metrics', async () => {
-      const scoped = createMonitor({ scope: 'customScope' });
+      const scoped = createMonitor<['my_entity_id']>({ scope: 'customScope' });
 
       expect(
         scoped('custom', () => 5, {
@@ -189,12 +206,20 @@ describe('monitor', () => {
         }),
       ).toBe(5);
 
+      expect(
+        scoped('another', () => 5, {
+          context: { myId: '5' },
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          labeling: { my_entity_id: '2' },
+        }),
+      ).toBe(5);
+
       const metrics = register.getMetricsAsArray();
 
-      expect(metrics).toHaveLength(8);
-      expect(metrics[6]).toMatchObject({ name: 'customScope_count' });
-      expect(metrics[7]).toMatchObject({ name: 'customScope_execution_time' });
-      expect(metrics[6]).toHaveProperty('hashMap.method:custom,my_entity_id:5,result:success', {
+      expect(metrics).toHaveLength(10);
+      expect(metrics[8]).toMatchObject({ name: 'customScope_count' });
+      expect(metrics[9]).toMatchObject({ name: 'customScope_execution_time' });
+      expect(metrics[8]).toHaveProperty('hashMap.method:custom,my_entity_id:5,result:success', {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         labels: { method: 'custom', my_entity_id: '5', result: 'success' },
         value: 1,
