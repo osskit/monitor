@@ -85,8 +85,6 @@ describe('monitor', () => {
 
       const metrics = register.getMetricsAsArray();
 
-      console.log({ bla: metrics[4] });
-
       expect(metrics).toHaveLength(8);
       expect(metrics[0]).toMatchObject({ name: 'first_count' });
       expect(metrics[1]).toMatchObject({ name: 'first_execution_time' });
