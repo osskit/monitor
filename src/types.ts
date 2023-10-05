@@ -20,14 +20,14 @@ export interface MonitorOptionsBase {
   errorLogLevel?: Level;
 }
 
-export interface MonitorOptions<T> extends MonitorOptionsBase {
-  parseResult?: (r: Awaited<T>) => any;
-  labeling?: Record<string, string>;
+export interface MonitorOptions<Result> extends MonitorOptionsBase {
+  parseResult?: <T>(result: Awaited<Result>) => T;
 }
 
-export interface Monitor<Callable> {
+export interface Monitor<Result> {
   scope?: string;
+  labeling?: Record<string, string>;
   method: string;
-  callable: () => Callable;
-  options?: MonitorOptions<Callable>;
+  callable: () => Result;
+  options?: MonitorOptions<Result>;
 }

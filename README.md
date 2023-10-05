@@ -23,7 +23,10 @@ export const monitor = createMonitor({ scope: 'metrics' });
 const result1 = await monitor('query', async () => db.query());
 const result2 = await monitor('update', async () => db.update());
 
-// `metrics.query`, `metrics.update` for logs & metrics
+// Custom labeling
+export const monitor = createMonitor<['my_label']>({ scope: 'metrics' });
+
+const customLabels = (id: string) => await monitor('query', async () => db.query(id), {context: {key: 'myId' }, labeling: { 'my_label': 'label' } });
 ```
 ### Unscoped
 ```ts
@@ -31,7 +34,8 @@ import monitor from '@osskit/monitor'
 
 const result = await monitor('query', async () => db.query());
 
-// `query` for logs & metrics
+// Custom labeling 
+const customLabels = (id: string) => await monitor('query', async () => db.query(id), {context: {key: 'myId' }, labeling: { 'my_label': 'label' } });
 ```
 ### With monitor options
 ```ts
@@ -51,8 +55,6 @@ const errored = (id: string) => await monitor('query', async () => db.query(id),
 // Log Execution Start
 const executionStart = (id: string) => await monitor('query', async () => db.query(id), { logExecutionStart: true });
 
-// Custom labeling
-const customLabels = (id: string) => await monitor('query', async () => db.query(id), {context: {key: 'myId' }, labeling: { 'labelName': 'myId' } });
 ```
 
 ### With global options

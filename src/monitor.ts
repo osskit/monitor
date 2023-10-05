@@ -11,7 +11,7 @@ import { getGlobalContext } from './globalContext.js';
 import safe from './safe.js';
 import type { MonitorOptions, InitOptions, Monitor } from './types.js';
 
-const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, callable, options }: Monitor<Callable>) => {
+const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, callable, labeling, options }: Monitor<Callable>) => {
   const method = monitorMethod.replaceAll('-', '_');
   const sanitizedScope = monitorScope?.replaceAll('-', '_');
   const metric = sanitizedScope ?? method;
@@ -21,8 +21,7 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
   const logResult = options?.logResult ?? globalLogResult;
   const parseError = options?.parseError ?? globalParseError;
   const errorLogLevel = options?.errorLogLevel ?? globalErrorLogLevel;
-  const labeling = options?.labeling ?? {};
-  const labelingKeys = Object.keys(labeling);
+  const labelingKeys = Object.keys(labeling ?? {});
 
   const counter = createCounter({
     name: `${metric}_count`,
@@ -115,9 +114,22 @@ const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, ca
 };
 
 export const createMonitor =
-  ({ scope, ...initOptions }: InitOptions) =>
-  <Callable>(method: string, callable: () => Callable, options?: MonitorOptions<Callable>) =>
-    innerMonitor({ scope, method, callable, options: { ...initOptions.options, ...options } });
+  <LabelKeys extends readonly string[] = []>({ scope, ...initOptions }: InitOptions) =>
+  <Result>(
+    method: string,
+    callable: () => Result,
+    options?: MonitorOptions<Result> & (LabelKeys[number] extends never ? object : { labeling: Record<LabelKeys[number], string> }),
+  ) =>
+    innerMonitor({
+      scope,
+      method,
+      callable,
+      labeling: options && 'labeling' in options ? options.labeling : undefined,
+      options: { ...initOptions.options, ...options },
+    });
 
-export const monitor = <Callable>(method: string, callable: () => Callable, options?: MonitorOptions<Callable>) =>
-  innerMonitor({ method, callable, options });
+export const monitor = <Result>(
+  method: string,
+  callable: () => Result,
+  options?: MonitorOptions<Result> & { labeling?: Record<string, string> },
+) => innerMonitor({ method, callable, labeling: options?.labeling, options });
