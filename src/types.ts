@@ -21,7 +21,7 @@ export interface MonitorOptionsBase {
 }
 
 export interface MonitorOptions<Result> extends MonitorOptionsBase {
-  parseResult?: <T>(result: Awaited<Result>) => T;
+  parseResult?: (result: Awaited<Result>) => any;
 }
 
 export interface Monitor<Result> {
