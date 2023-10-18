@@ -1,3 +1,7 @@
 {
-  "extends": "@osskit/eslint-config/test"
+  "extends": "@osskit/eslint-config/test",
+  "root": false,
+  "parserOptions": {
+    "project": "./tests/tsconfig.json"
+  }
 }

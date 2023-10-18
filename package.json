@@ -1,6 +1,6 @@
 {
   "name": "@osskit/monitor",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "repository": {
     "url": "https://github.com/osskit/monitor"
   },
@@ -32,32 +32,32 @@
     "prom-client": ">=14.0.1"
   },
   "dependencies": {
-    "@sindresorhus/is": "^5.3.0",
-    "pino": "^8.5.0"
+    "@sindresorhus/is": "^6.0.1",
+    "pino": "^8.16.0"
   },
   "devDependencies": {
-    "@osskit/eslint-config": "^1.0.10",
+    "@osskit/eslint-config": "^1.0.20",
     "@osskit/prettier-config": "^0.0.1",
     "@osskit/tsconfig": "^0.0.6",
-    "@types/express": "^4.17.14",
-    "@types/jest": "^29.0.2",
-    "@types/node": "^18.7.18",
-    "@typescript-eslint/eslint-plugin": "^5.37.0",
-    "@typescript-eslint/parser": "^5.37.0",
-    "eslint": "^8.23.1",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jest": "^27.0.4",
-    "eslint-plugin-unicorn": "^43.0.2",
-    "express": "^4.18.1",
-    "express-prom-bundle": "^6.5.0",
-    "husky": "^8.0.1",
-    "jest": "^29.0.3",
-    "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1",
-    "prom-client": "^14.1.0",
-    "ts-jest": "^29.0.1",
+    "@types/express": "^4.17.20",
+    "@types/jest": "^29.5.6",
+    "@types/node": "^20.8.6",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "eslint": "^8.51.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jest": "^27.4.2",
+    "eslint-plugin-unicorn": "^48.0.1",
+    "express": "^4.18.2",
+    "express-prom-bundle": "^6.6.0",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.0.1",
+    "prettier": "^3.0.3",
+    "prom-client": "^15.0.0",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.3"
+    "typescript": "^5.2.2"
   },
   "lint-staged": {
     "*.ts": "eslint --fix",

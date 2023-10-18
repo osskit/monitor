@@ -225,5 +225,30 @@ describe('monitor', () => {
         value: 1,
       });
     });
+
+    it('should parse result', () => {
+      const logger = {
+        level: 'info',
+        info: jest.fn(),
+        debug: jest.fn(),
+        error: jest.fn(),
+        fatal: jest.fn(),
+        silent: jest.fn(),
+        trace: jest.fn(),
+        warn: jest.fn(),
+      } satisfies BaseLogger;
+
+      setGlobalOptions({ logger, errorLogLevel: 'trace', parseError: (error) => error.message });
+
+      const scoped = createMonitor({ scope: 'scope' });
+
+      scoped('logs', () => ({ a: 5 }), { logResult: true, parseResult: ({ a }) => a });
+
+      expect(logger.info).toHaveBeenCalled();
+
+      const [call] = logger.info.mock.calls;
+      expect(call?.[0]).toHaveProperty('extra.executionResult.value', 5);
+      expect(call?.[1]).toBe('scope.logs.success');
+    });
   });
 });

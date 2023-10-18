@@ -28,11 +28,11 @@ export const setGlobalOptions = ({
     prometheusBuckets = optionalPrometheusBuckets;
   }
 
-  if (typeof optionalLogExecutionStart !== 'undefined') {
+  if (optionalLogExecutionStart !== undefined) {
     logExecutionStart = optionalLogExecutionStart;
   }
 
-  if (typeof optionalLogResult !== 'undefined') {
+  if (optionalLogResult !== undefined) {
     logResult = optionalLogResult;
   }
 
