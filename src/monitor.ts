@@ -8,7 +8,7 @@ import {
 } from './globalOptions.js';
 import { createCounter, createHistogram } from './prometheus.js';
 import { getGlobalContext } from './globalContext.js';
-import safe from './safe.js';
+import { safe } from './safe.js';
 import type { MonitorOptions, InitOptions, Monitor } from './types.js';
 
 const innerMonitor = <Callable>({ scope: monitorScope, method: monitorMethod, callable, labeling, options }: Monitor<Callable>) => {

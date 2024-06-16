@@ -1,4 +1,4 @@
-export default (fn: any) => (r: any) => {
+export const safe = (fn: any) => (r: any) => {
   try {
     if (fn) {
       const result = fn(r);

@@ -1,7 +1,6 @@
 import { register } from 'prom-client';
 import type { BaseLogger } from 'pino';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { monitor, createMonitor, setGlobalOptions } from '../src/index.js';
 
 describe('monitor', () => {
@@ -27,7 +26,7 @@ describe('monitor', () => {
       expect(metrics).toHaveLength(4);
       expect(metrics[2]).toMatchObject({ name: 'name_count' });
       expect(metrics[3]).toMatchObject({ name: 'name_execution_time' });
-      expect(metrics[2]).toHaveProperty('hashMap.id:5,method:name,result:success', {
+      expect(metrics[2]).toHaveProperty('hashMap.id:5,method:name,result:success,', {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         labels: { method: 'name', id: '5', result: 'success' },
         value: 1,
@@ -75,7 +74,7 @@ describe('monitor', () => {
       expect(metrics[3]).toMatchObject({ name: 'name_execution_time' });
       expect(metrics[4]).toMatchObject({ name: 'scope_count' });
       expect(metrics[5]).toMatchObject({ name: 'scope_execution_time' });
-      expect(metrics[4]).toHaveProperty('hashMap.method:name,result:success.value', 1);
+      expect(metrics[4]).toHaveProperty('hashMap.method:name,result:success,.value', 1);
     });
 
     it('should sanitize metric names', async () => {
@@ -94,19 +93,19 @@ describe('monitor', () => {
       expect(metrics[5]).toMatchObject({ name: 'scope_execution_time' });
       expect(metrics[6]).toMatchObject({ name: 'outer_scope_count' });
       expect(metrics[7]).toMatchObject({ name: 'outer_scope_execution_time' });
-      expect(metrics[6]).toHaveProperty('hashMap.method:metric_name,result:success.value', 1);
+      expect(metrics[6]).toHaveProperty('hashMap.method:metric_name,result:success,.value', 1);
     });
 
     it('should write logs', () => {
       const logger: BaseLogger = {
         level: 'info',
-        info: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn(),
-        fatal: jest.fn(),
-        silent: jest.fn(),
-        trace: jest.fn(),
-        warn: jest.fn(),
+        info: vi.fn<unknown[]>(),
+        debug: vi.fn<unknown[]>(),
+        error: vi.fn<unknown[]>(),
+        fatal: vi.fn<unknown[]>(),
+        silent: vi.fn<unknown[]>(),
+        trace: vi.fn<unknown[]>(),
+        warn: vi.fn<unknown[]>(),
       };
 
       setGlobalOptions({ logger });
@@ -124,13 +123,13 @@ describe('monitor', () => {
     it('should write logs with context', () => {
       const logger: BaseLogger = {
         level: 'info',
-        info: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn(),
-        fatal: jest.fn(),
-        silent: jest.fn(),
-        trace: jest.fn(),
-        warn: jest.fn(),
+        info: vi.fn<unknown[]>(),
+        debug: vi.fn<unknown[]>(),
+        error: vi.fn<unknown[]>(),
+        fatal: vi.fn<unknown[]>(),
+        silent: vi.fn<unknown[]>(),
+        trace: vi.fn<unknown[]>(),
+        warn: vi.fn<unknown[]>(),
       };
 
       setGlobalOptions({ logger });
@@ -148,13 +147,13 @@ describe('monitor', () => {
     it('should write error log at error level', () => {
       const logger: BaseLogger = {
         level: 'info',
-        info: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn(),
-        fatal: jest.fn(),
-        silent: jest.fn(),
-        trace: jest.fn(),
-        warn: jest.fn(),
+        info: vi.fn<unknown[]>(),
+        debug: vi.fn<unknown[]>(),
+        error: vi.fn<unknown[]>(),
+        fatal: vi.fn<unknown[]>(),
+        silent: vi.fn<unknown[]>(),
+        trace: vi.fn<unknown[]>(),
+        warn: vi.fn<unknown[]>(),
       };
 
       setGlobalOptions({ logger, parseError: (error) => error.message });
@@ -173,13 +172,13 @@ describe('monitor', () => {
     it('should write error log at trace level', () => {
       const logger: BaseLogger = {
         level: 'info',
-        info: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn(),
-        fatal: jest.fn(),
-        silent: jest.fn(),
-        trace: jest.fn(),
-        warn: jest.fn(),
+        info: vi.fn<unknown[]>(),
+        debug: vi.fn<unknown[]>(),
+        error: vi.fn<unknown[]>(),
+        fatal: vi.fn<unknown[]>(),
+        silent: vi.fn<unknown[]>(),
+        trace: vi.fn<unknown[]>(),
+        warn: vi.fn<unknown[]>(),
       };
 
       setGlobalOptions({ logger, errorLogLevel: 'trace', parseError: (error) => error.message });
@@ -219,7 +218,7 @@ describe('monitor', () => {
       expect(metrics).toHaveLength(10);
       expect(metrics[8]).toMatchObject({ name: 'customScope_count' });
       expect(metrics[9]).toMatchObject({ name: 'customScope_execution_time' });
-      expect(metrics[8]).toHaveProperty('hashMap.method:custom,my_entity_id:5,result:success', {
+      expect(metrics[8]).toHaveProperty('hashMap.method:custom,my_entity_id:5,result:success,', {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         labels: { method: 'custom', my_entity_id: '5', result: 'success' },
         value: 1,
@@ -229,13 +228,13 @@ describe('monitor', () => {
     it('should parse result', () => {
       const logger = {
         level: 'info',
-        info: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn(),
-        fatal: jest.fn(),
-        silent: jest.fn(),
-        trace: jest.fn(),
-        warn: jest.fn(),
+        info: vi.fn<unknown[]>(),
+        debug: vi.fn<unknown[]>(),
+        error: vi.fn<unknown[]>(),
+        fatal: vi.fn<unknown[]>(),
+        silent: vi.fn<unknown[]>(),
+        trace: vi.fn<unknown[]>(),
+        warn: vi.fn<unknown[]>(),
       } satisfies BaseLogger;
 
       setGlobalOptions({ logger, errorLogLevel: 'trace', parseError: (error) => error.message });
