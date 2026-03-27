@@ -9,6 +9,7 @@ export let logExecutionStart = false;
 export let parseError: (e: any) => any = (e: any) => e;
 export let prometheusBuckets: number[] = [0.003, 0.03, 0.1, 0.3, 1.5, 10];
 export let errorLogLevel: Level = 'error';
+export let metrics = true;
 
 export let logger: BaseLogger = defaultLogger;
 
@@ -19,6 +20,7 @@ export const setGlobalOptions = ({
   prometheusBuckets: optionalPrometheusBuckets,
   logger: optionalLogger,
   errorLogLevel: optionalErrorLogLevel,
+  metrics: optionalMetrics,
 }: Partial<GlobalOptions>) => {
   if (optionalLogger) {
     logger = optionalLogger;
@@ -42,5 +44,9 @@ export const setGlobalOptions = ({
 
   if (optionalErrorLogLevel) {
     errorLogLevel = optionalErrorLogLevel;
+  }
+
+  if (optionalMetrics !== undefined) {
+    metrics = optionalMetrics;
   }
 };
