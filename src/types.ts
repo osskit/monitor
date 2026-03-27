@@ -3,6 +3,7 @@ import type { BaseLogger, Level } from 'pino';
 export interface GlobalOptions extends MonitorOptionsBase {
   prometheusBuckets: number[];
   logger: BaseLogger;
+  metrics: boolean;
 }
 
 export interface InitOptions {

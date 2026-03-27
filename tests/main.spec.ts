@@ -225,6 +225,68 @@ describe('monitor', () => {
       });
     });
 
+    it('should not create metrics when metrics is disabled', () => {
+      const logger: BaseLogger = {
+        level: 'info',
+        info: vi.fn<unknown[]>(),
+        debug: vi.fn<unknown[]>(),
+        error: vi.fn<unknown[]>(),
+        fatal: vi.fn<unknown[]>(),
+        silent: vi.fn<unknown[]>(),
+        trace: vi.fn<unknown[]>(),
+        warn: vi.fn<unknown[]>(),
+      };
+
+      setGlobalOptions({ logger, metrics: false });
+
+      const metricsBefore = register.getMetricsAsArray().length;
+
+      const scoped = createMonitor({ scope: 'noMetricsScope' });
+
+      expect(scoped('name', () => 5)).toBe(5);
+
+      const metricsAfter = register.getMetricsAsArray().length;
+
+      expect(metricsAfter).toBe(metricsBefore);
+      expect(logger.info).toHaveBeenCalledWith(
+        { extra: { context: {}, executionResult: undefined, executionTime: undefined } },
+        'noMetricsScope.name.success',
+      );
+
+      setGlobalOptions({ metrics: true });
+    });
+
+    it('should not create metrics for async functions when metrics is disabled', async () => {
+      const logger: BaseLogger = {
+        level: 'info',
+        info: vi.fn<unknown[]>(),
+        debug: vi.fn<unknown[]>(),
+        error: vi.fn<unknown[]>(),
+        fatal: vi.fn<unknown[]>(),
+        silent: vi.fn<unknown[]>(),
+        trace: vi.fn<unknown[]>(),
+        warn: vi.fn<unknown[]>(),
+      };
+
+      setGlobalOptions({ logger, metrics: false });
+
+      const metricsBefore = register.getMetricsAsArray().length;
+
+      const scoped = createMonitor({ scope: 'noMetricsScope' });
+
+      await expect(scoped('name', async () => 5)).resolves.toBe(5);
+
+      const metricsAfter = register.getMetricsAsArray().length;
+
+      expect(metricsAfter).toBe(metricsBefore);
+      expect(logger.info).toHaveBeenCalledWith(
+        { extra: { context: {}, executionResult: undefined, executionTime: undefined } },
+        'noMetricsScope.name.success',
+      );
+
+      setGlobalOptions({ metrics: true });
+    });
+
     it('should parse result', () => {
       const logger = {
         level: 'info',
